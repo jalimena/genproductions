@@ -28,8 +28,8 @@ ls
 >>> submission  submission.tar.gz  write_yaml.py
 ```
 
-"submission" is a folder containing individual yaml files. 
-submission.tar.gz is an archive ready for uploading to HEPData.
+```submission``` is a folder containing individual yaml files. 
+```submission.tar.gz``` is an archive ready for uploading to HEPData.
 
 You can test this by going to
 
