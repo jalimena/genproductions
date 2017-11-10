@@ -1,4 +1,4 @@
-Repository to store everything around HEPData use in EXO.
+**Repository to store everything around HEPData use in EXO.**
 
 The goal is to
 
@@ -8,16 +8,18 @@ b) to store the submission files.
 
 
 
-Usage
-
-To use the repository
-
+**Usage**
 ```
 # Set up the repository
 git clone ssh://git@gitlab.cern.ch:7999/cms-exo-mci/exo-hepdata.git
 cd exo-hepdata
-source setenv.sh
 
+# Make sure the libraries are part of the python PATH.
+source setenv.sh
+```
+
+**Example**
+```
 # Run an example
 cd EXO-16-052
 ./write_yaml.py
