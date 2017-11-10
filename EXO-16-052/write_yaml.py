@@ -22,15 +22,13 @@ def write_table_4(outdir):
     [(300,350), 11  , (9.64, 0.80 ), ( 9.4,1.2  )],
     [(350,400), 6   , (4.73, 0.47 ), ( 4.58,0.66)],
     [(400,500), 6   , (3.44, 0.39 ), ( 3.31,0.54)],
-    [(500,1000), 1  , (1.63, 0.24 ), (1.57,0.33 )]
+    [(500,13000), 1  , (1.63, 0.24 ), (1.57,0.33 )]
     ]
     
     variables = []
     
     ### First variable/column ---> MET
-    
-    met = Variable()
-    met.name = "MET"
+    met = Variable("MET")
     met.is_independent = True
     met.is_binned = True
     met.units = "GeV"
@@ -39,8 +37,7 @@ def write_table_4(outdir):
     variables.append(met)
     
     ### Second variable/column ---> Number of observed events
-    obs = Variable()
-    obs.name = "Observed"
+    obs = Variable("Observed")
     obs.is_independent = False
     obs.is_binned = False
     obs.units = "Events"
@@ -48,16 +45,13 @@ def write_table_4(outdir):
     variables.append(obs)
     
     ### Third variable/column ---> Number of predicted events from full fit
-    exp_full = Variable()
-    exp_full.name = "Prediction (SR+CR fit)"
+    exp_full = Variable("Prediction (SR+CR fit)")
     exp_full.is_independent = False
     exp_full.is_binned = False
     exp_full.units = "Events"
     exp_full.values = [item[2][0] for item in data]
     
-    unc1 = Uncertainty()
-    unc1.label = "total"
-    unc1.is_symmetric = True
+    unc1 = Uncertainty("total")
     unc1.values = [item[2][1] for item in data]
     exp_full.uncertainties.append(unc1)
     
@@ -65,16 +59,13 @@ def write_table_4(outdir):
     
     
     ### Third variable/column ---> Number of predicted events from CR-only fit
-    exp_full = Variable()
-    exp_full.name = "Prediction (CR-only fit)"
+    exp_full = Variable("Prediction (CR-only fit)")
     exp_full.is_independent = False
     exp_full.is_binned = False
     exp_full.units = "Events"
     exp_full.values = [item[3][0] for item in data]
     
-    unc1 = Uncertainty()
-    unc1.label = "total"
-    unc1.is_symmetric = True
+    unc1 = Uncertainty("total")
     unc1.values = [item[3][1] for item in data]
     exp_full.uncertainties.append(unc1)
     
@@ -106,11 +97,23 @@ def write_submission_file(outdir):
     with open(os.path.join(outdir,'submission.yaml'), 'w') as outfile:
         yaml.dump(submission, outfile, default_flow_style=False)
 
-def main():
 
+
+def main():
+    ### Write to this directory
     outdir = "./submission/"
 
+    ### Write some files
     write_table_4(outdir)
     write_submission_file(outdir)
+
+    ### Put them into a tar file
+    import tarfile
+    tar = tarfile.open("submission.tar.gz", "w:gz")
+    for f in find_all_matching(outdir,"*.yaml"):
+        tar.add(f)
+    tar.close()
+
+
 if __name__ == '__main__':
     main()

@@ -1,7 +1,19 @@
+import os
+import fnmatch
+def find_all_matching(path,pattern):
+    if not os.path.exists(path):
+        raise RuntimeError("Invalid path '{0}'".format(path))
+    result = []
+    for root, dirs, files in os.walk(path):
+        for thisfile in files:
+            if fnmatch.fnmatch(thisfile, pattern):
+                result.append(os.path.join(root, thisfile ))
+    return result
+
 
 class Variable():
-    def __init__(self):
-        self.name = ""
+    def __init__(self, name):
+        self.name = name
         self.is_independent = True
         self.is_binned = True
         
@@ -39,8 +51,8 @@ class Variable():
         return tmp
 
 class Uncertainty():
-    def __init__(self):
-        self.label = ""
+    def __init__(self,label):
+        self.label = label
         self.is_symmetric = True
         self.values = []
         self.values_up = []
