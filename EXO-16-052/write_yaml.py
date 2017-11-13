@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
-
-import yaml
 import os
 
 from hepdata_lib import *
@@ -26,7 +24,8 @@ def write_table_4(outdir):
     ]
     
     variables = []
-    
+
+    table = Table("table4")
     ### First variable/column ---> MET
     met = Variable("MET")
     met.is_independent = True
@@ -34,7 +33,7 @@ def write_table_4(outdir):
     met.units = "GeV"
     met.values_low = [item[0][0] for item in data]
     met.values_high = [item[0][1] for item in data]
-    variables.append(met)
+    table.add_variable(met)
     
     ### Second variable/column ---> Number of observed events
     obs = Variable("Observed")
@@ -42,7 +41,7 @@ def write_table_4(outdir):
     obs.is_binned = False
     obs.units = "Events"
     obs.values = [item[1] for item in data]
-    variables.append(obs)
+    table.add_variable(obs)
     
     ### Third variable/column ---> Number of predicted events from full fit
     exp_full = Variable("Prediction (SR+CR fit)")
@@ -55,7 +54,7 @@ def write_table_4(outdir):
     unc1.values = [item[2][1] for item in data]
     exp_full.uncertainties.append(unc1)
     
-    variables.append(exp_full)
+    table.add_variable(exp_full)
     
     
     ### Third variable/column ---> Number of predicted events from CR-only fit
@@ -69,20 +68,9 @@ def write_table_4(outdir):
     unc1.values = [item[3][1] for item in data]
     exp_full.uncertainties.append(unc1)
     
-    variables.append(exp_full)
-    
-    
-    ### Put all variables together into a table and write
-    table = {}
-    table["independent_variables"] = []
-    table["dependent_variables"] = []
-    for v in variables:
-        table[ "independent_variables" if v.is_independent else "dependent_variables" ].append(v.make_dict())
-    
-    if(not os.path.exists(outdir)):
-        os.makedirs(outdir)
-    with open(os.path.join(outdir,'table4.yaml'), 'w') as outfile:
-        yaml.dump(table, outfile, default_flow_style=False)
+    table.add_variable(exp_full)
+
+    table.write_yaml(outdir)
 
 def write_submission_file(outdir):
     #### Write submission file

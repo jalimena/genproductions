@@ -1,5 +1,6 @@
 import os
 import fnmatch
+import yaml
 def find_all_matching(path,pattern):
     if not os.path.exists(path):
         raise RuntimeError("Invalid path '{0}'".format(path))
@@ -16,7 +17,7 @@ class Variable():
         self.name = name
         self.is_independent = True
         self.is_binned = True
-        
+
         self.units = ""
         self.values = []
         self.values_low = []
@@ -27,9 +28,9 @@ class Variable():
         tmp = {}
         tmp["header"]={"name":self.name, "units" : self.units}
         #~ tmp["qualifiers"]=[{ "name" : "TESTQUALNAME", "value":"TESTQUALVALUE" }]
-        
+
         tmp["values"]=[]
-        
+
         for i in range(len(self.values_low if self.is_binned else self.values)):
             valuedict = {}
 
@@ -49,6 +50,27 @@ class Variable():
                                                                   "plus" : unc.values_up[i]}})
             tmp["values"].append(valuedict)
         return tmp
+
+class Table():
+    def __init__(self,name):
+        self.name = name
+        self.variables = []
+
+    def add_variable(self,variable):
+        self.variables.append(variable)
+
+    def write_yaml(self,outdir="."):
+        ### Put all variables together into a table and write
+        table = {}
+        table["independent_variables"] = []
+        table["dependent_variables"] = []
+        for v in self.variables:
+            table[ "independent_variables" if v.is_independent else "dependent_variables" ].append(v.make_dict())
+
+        if(not os.path.exists(outdir)):
+            os.makedirs(outdir)
+        with open(os.path.join(outdir,'{NAME}.yaml'.format(NAME=self.name)), 'w' ) as outfile:
+            yaml.dump(table, outfile, default_flow_style=False)
 
 class Uncertainty():
     def __init__(self,label):
