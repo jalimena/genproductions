@@ -1,3 +1,5 @@
+**Code style**
+
 Please make sure to check your code style before making a pull request.
 
 A first stop is to apply the ```autopep8``` code checker. 
