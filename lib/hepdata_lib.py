@@ -144,7 +144,7 @@ class Submission(object):
 
         # Write all the tables
         for table in self.tables:
-            table.write_yaml()
+            table.write_yaml(outdir)
 
         # Put everything into a tarfile
         import tarfile
