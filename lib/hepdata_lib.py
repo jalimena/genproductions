@@ -125,9 +125,10 @@ class Submission(object):
     def read_abstract(self,filepath):
         with open(filepath) as afile:
             raw = str(afile.read())
-        raw.replace("\r\n","")
-        print raw
-        self.comment = " ".join(raw)
+        raw=raw.replace("\r\n","")
+        raw=raw.replace("\n","")
+
+        self.comment = raw
 
 
 
