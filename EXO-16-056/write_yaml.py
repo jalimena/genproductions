@@ -110,7 +110,7 @@ def main():
 
     submission.read_abstract("./input/abstract.txt")
 
-    submission.create_files()
+    submission.create_files(outdir)
 
 
 
