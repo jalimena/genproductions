@@ -5,7 +5,7 @@ import os
 from hepdata_lib import *
 
 
-def write_table_4(outdir):
+def make_table_4(outdir):
     # This is the raw data from EXO-16-052
     # Table 4
     # It has four columns, corresponding to four variables
@@ -22,83 +22,51 @@ def write_table_4(outdir):
         [(500, 13000), 1, (1.63, 0.24), (1.57, 0.33)]
     ]
 
-    table = Table("table4")
+    table = Table("Event yields in the signal region")
+
     # First variable/column ---> MET
-    met = Variable("MET")
-    met.is_independent = True
-    met.is_binned = True
-    met.units = "GeV"
+    met = Variable("MET",is_independent = True,is_binned = True,units = "GeV")
     met.values_low = [item[0][0] for item in data]
     met.values_high = [item[0][1] for item in data]
-    table.add_variable(met)
+
 
     # Second variable/column ---> Number of observed events
-    obs = Variable("Observed")
-    obs.is_independent = False
-    obs.is_binned = False
-    obs.units = "Events"
+    obs = Variable("Data",is_independent = False,is_binned = False,units = "Events")
     obs.values = [item[1] for item in data]
-    table.add_variable(obs)
+
 
     # Third variable/column ---> Number of predicted events from full fit
-    exp_full = Variable("Prediction (SR+CR fit)")
-    exp_full.is_independent = False
-    exp_full.is_binned = False
-    exp_full.units = "Events"
+    exp_full = Variable("Prediction (SR+CR fit)",is_independent = False,is_binned = False,units = "Events")
     exp_full.values = [item[2][0] for item in data]
 
-    unc1 = Uncertainty("total")
-    unc1.values = [item[2][1] for item in data]
-    exp_full.uncertainties.append(unc1)
-
-    table.add_variable(exp_full)
+    unc_full = Uncertainty("total")
+    unc_full.values = [item[2][1] for item in data]
+    exp_full.uncertainties.append(unc_full)
 
     # Third variable/column ---> Number of predicted events from CR-only fit
-    exp_full = Variable("Prediction (CR-only fit)")
-    exp_full.is_independent = False
-    exp_full.is_binned = False
-    exp_full.units = "Events"
-    exp_full.values = [item[3][0] for item in data]
+    exp_cr = Variable("Prediction (CR-only fit)",is_independent = False,is_binned = False,units = "Events")
+    exp_cr.values = [item[3][0] for item in data]
 
-    unc1 = Uncertainty("total")
-    unc1.values = [item[3][1] for item in data]
-    exp_full.uncertainties.append(unc1)
+    unc_cr = Uncertainty("total")
+    unc_cr.values = [item[3][1] for item in data]
+    exp_cr.uncertainties.append(unc_cr)
 
+    table.add_variable(met)
+    table.add_variable(obs)
     table.add_variable(exp_full)
+    table.add_variable(exp_cr)
 
-    table.write_yaml(outdir)
-
-
-def write_submission_file(outdir):
-    # Write submission file
-    submission = {}
-    submission["name"] = "Table 4"
-    submission["description"] = "A histogram we really care about. It is super important. That's why it has a description."
-    submission["keywords"] = [
-        {"name": "Analysis groups", "values": ["EXO", "EXO-METX"]}]
-    submission["data_file"] = "table4.yaml"
-
-    if(not os.path.exists(outdir)):
-        os.makedirs(outdir)
-    with open(os.path.join(outdir, 'submission.yaml'), 'w') as outfile:
-        yaml.dump(submission, outfile, default_flow_style=False)
-
+    return table
 
 def main():
     # Write to this directory
     outdir = "./submission/"
 
     # Write some files
-    write_table_4(outdir)
-    write_submission_file(outdir)
-
-    # Put them into a tar file
-    import tarfile
-    tar = tarfile.open("submission.tar.gz", "w:gz")
-    for f in find_all_matching(outdir, "*.yaml"):
-        tar.add(f)
-    tar.close()
-
+    submission = Submission()
+    submission.tables.append(make_table_4(outdir))
+    submission.read_abstract("./input/abstract.ttxt"))
+    submission.create_files()
 
 if __name__ == '__main__':
     main()
