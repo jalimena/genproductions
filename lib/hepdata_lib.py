@@ -21,12 +21,12 @@ class Variable(object):
     # pylint: disable=too-many-instance-attributes
     # Eight is reasonable in this case.
 
-    def __init__(self, name):
+    def __init__(self, name, is_independent=True, is_binned=True, units=""):
         self.name = name
-        self.is_independent = True
-        self.is_binned = True
+        self.is_independent = is_independent
+        self.is_binned = is_binned
 
-        self.units = ""
+        self.units = units
         self.values = []
         self.values_low = []
         self.values_high = []
@@ -61,11 +61,15 @@ class Variable(object):
 
 
 class Table(object):
-    """A table is a collection of variables."""
+    """A table is a collection of variables.
+    It also holds meta-data such as a general description,
+    the location within the paper, etc."""
 
     def __init__(self, name):
         self.name = name
         self.variables = []
+        self.description = "Example description"
+        self.location = "Example location"
 
     def add_variable(self, variable):
         """Add a variable to the table"""
@@ -83,8 +87,73 @@ class Table(object):
 
         if not os.path.exists(outdir):
             os.makedirs(outdir)
-        with open(os.path.join(outdir, '{NAME}.yaml'.format(NAME=self.name)), 'w') as outfile:
+
+
+        shortname = self.name.lower().replace(" ","-")
+        outfile_path = os.path.join(outdir, '{NAME}.yaml'.format(NAME=shortname))
+        with open(outfile_path, 'w') as outfile:
             yaml.dump(table, outfile, default_flow_style=False)
+
+        # Add entry to central submission file
+        submission_path = os.path.join(outdir, 'submission.yaml')
+        with open(submission_path,'a+') as submissionfile:
+
+            submission = {}
+            submission["name"] = self.name
+            submission["description"] = self.description
+            submission["location"] = self.location
+            submission["data_file"] = '{NAME}.yaml'.format(NAME=shortname)
+            submission["keywords"] = [
+                {"name": "Analysis groups", "values": ["EXOTICA"]}]
+
+            if(len(submissionfile.read())):
+                submissionfile.write("---\n")
+            yaml.dump(submission,submissionfile,default_flow_style=False)
+        return os.path.basename(outfile_path)
+
+class Submission(object):
+    """Top-level object of a HEPData submission.
+    Holds all the lower-level objects and controls writing."""
+
+    def __init__(self):
+        self.tables = []
+        self.comment = ""
+
+    def add_table(self,table):
+        self.tables.append(table)
+
+    def read_abstract(self,filepath):
+        with open(filepath) as afile:
+            raw = str(afile.read())
+        raw.replace("\r\n","")
+        print raw
+        self.comment = " ".join(raw)
+
+
+
+    def create_files(self,outdir="."):
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+
+        # Write general info about submission
+        submission = {}
+        submission["comment"] = self.comment
+        with open(os.path.join(outdir, 'submission.yaml'), 'w') as outfile:
+            yaml.dump(submission, outfile, default_flow_style=False)
+
+        # Write all the tables
+        for table in self.tables:
+            table.write_yaml()
+
+        # Put everything into a tarfile
+        import tarfile
+        tar = tarfile.open("submission.tar.gz", "w:gz")
+        for f in find_all_matching(outdir, "*.yaml"):
+            tar.add(f)
+        tar.close()
+
+
+
 
 
 class Uncertainty(object):
