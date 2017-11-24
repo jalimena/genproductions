@@ -65,8 +65,8 @@ def main():
     # Write some files
     submission = Submission()
     submission.tables.append(make_table_4(outdir))
-    submission.read_abstract("./input/abstract.ttxt"))
-    submission.create_files()
+    submission.read_abstract("./input/abstract.txt")
+    submission.create_files(outdir)
 
 if __name__ == '__main__':
     main()
