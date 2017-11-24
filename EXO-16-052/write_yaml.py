@@ -19,10 +19,15 @@ def make_table_4(outdir):
         [(300, 350), 11, (9.64, 0.80), (9.4, 1.2)],
         [(350, 400), 6, (4.73, 0.47), (4.58, 0.66)],
         [(400, 500), 6, (3.44, 0.39), (3.31, 0.54)],
-        [(500, 13000), 1, (1.63, 0.24), (1.57, 0.33)]
+        [(500, 600), 1, (1.63, 0.24), (1.57, 0.33)]
     ]
 
     table = Table("Event yields in the signal region")
+    table.location = "Table 4, located on page 17."
+    table.description = """Expected event yields in each $p_{\mathrm{T}}^{\mathrm{miss}}$ bin for the sum of background processes in the signal region (SR).
+The background yields and their corresponding uncertainties are obtained after performing a fit to data.
+Two sets of background yields are reported: one from a background-only fit to data in both the SR and the control regions (CRs), and one from a fit to data in all CRs, but excluding data in the SR.
+The observed numbers of events in each bin are also included. The last bin includes overflow."""
 
     # First variable/column ---> MET
     met = Variable("MET",is_independent = True,is_binned = True,units = "GeV")
