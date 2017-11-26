@@ -72,7 +72,7 @@ class Table(object):
         self.description = "Example description"
         self.location = "Example location"
         self.keywords = {}
-    
+
     def add_variable(self, variable):
         """Add a variable to the table"""
         self.variables.append(variable)
@@ -90,15 +90,15 @@ class Table(object):
         if not os.path.exists(outdir):
             os.makedirs(outdir)
 
-
-        shortname = self.name.lower().replace(" ","-")
-        outfile_path = os.path.join(outdir, '{NAME}.yaml'.format(NAME=shortname))
+        shortname = self.name.lower().replace(" ", "-")
+        outfile_path = os.path.join(
+            outdir, '{NAME}.yaml'.format(NAME=shortname))
         with open(outfile_path, 'w') as outfile:
             yaml.dump(table, outfile, default_flow_style=False)
 
         # Add entry to central submission file
         submission_path = os.path.join(outdir, 'submission.yaml')
-        with open(submission_path,'a+') as submissionfile:
+        with open(submission_path, 'a+') as submissionfile:
 
             submission = {}
             submission["name"] = self.name
@@ -107,13 +107,14 @@ class Table(object):
             submission["data_file"] = '{NAME}.yaml'.format(NAME=shortname)
             submission["keywords"] = []
 
-            for name,values in self.keywords.items():
-                submission["keywords"].append({"name":name,"values":values})
+            for name, values in self.keywords.items():
+                submission["keywords"].append({"name": name, "values": values})
 
             if(len(submissionfile.read())):
                 submissionfile.write("---\n")
-            yaml.dump(submission,submissionfile,default_flow_style=False)
+            yaml.dump(submission, submissionfile, default_flow_style=False)
         return os.path.basename(outfile_path)
+
 
 class Submission(object):
     """Top-level object of a HEPData submission.
@@ -123,20 +124,18 @@ class Submission(object):
         self.tables = []
         self.comment = ""
 
-    def add_table(self,table):
+    def add_table(self, table):
         self.tables.append(table)
 
-    def read_abstract(self,filepath):
+    def read_abstract(self, filepath):
         with open(filepath) as afile:
             raw = str(afile.read())
-        raw=raw.replace("\r\n","")
-        raw=raw.replace("\n","")
+        raw = raw.replace("\r\n", "")
+        raw = raw.replace("\n", "")
 
         self.comment = raw
 
-
-
-    def create_files(self,outdir="."):
+    def create_files(self, outdir="."):
         if not os.path.exists(outdir):
             os.makedirs(outdir)
 
@@ -156,9 +155,6 @@ class Submission(object):
         for f in find_all_matching(outdir, "*.yaml"):
             tar.add(f)
         tar.close()
-
-
-
 
 
 class Uncertainty(object):
@@ -184,7 +180,7 @@ class Uncertainty(object):
         Can perform list subtraction relative to nominal value.
         """
         if(nominal):
-            self.values_up = [x-y for x,y in zip(values_up,nominal)]
+            self.values_up = [x - y for x, y in zip(values_up, nominal)]
         else:
             self.values_up = values_up
 
@@ -194,7 +190,7 @@ class Uncertainty(object):
         Can perform list subtraction relative to nominal value.
         """
         if(nominal):
-            self.values_down = [x-y for x,y in zip(values_down,nominal)]
+            self.values_down = [x - y for x, y in zip(values_down, nominal)]
         else:
             self.values_down = values_down
 
