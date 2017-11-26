@@ -6,17 +6,18 @@ from hepdata_lib import *
 import numpy as np
 
 def make_table_figure19(outdir):
-
+    # Input provided as tree (Yalcin Guler)
+    # Each branch holds one variable/variation
     reader = RootFileReader("input/fig19_gq/gq_WideLimitTree.root")
 
     table = Table("Limits on universal quark coupling")
     table.description = "."
 
     table.location = "Figure 19, located on page 24."
-
+    table.keywords["observables"] = ["Universal quark coupling"]
 
     # X axis: Mediator mass
-    mmed = Variable("$m_{med}$")
+    mmed = Variable("$M_{Med}$")
     mmed.is_independent = True
     mmed.is_binned = False
     mmed.units = "GeV"
@@ -48,10 +49,16 @@ def make_table_figure19(outdir):
 
     return table
 def make_table_figure7(outdir):
+    # Input provided as text file (Frederico Preiato, Giulia D'Imperio)
+    # Each columns holds one variable or uncertainty
+    data = np.loadtxt("./input/fig7/DijetSpectrum_2016full_36-27invfb.txt")
+
+
     table = Table("Differential dijet cross-section")
     table.description = "Observed differential dijet cross-section."
     table.location = "Figure 7, located on page 8."
-    data = np.loadtxt("./input/fig7/DijetSpectrum_2016full_36-27invfb.txt")
+    table.keywords["observables"] = ["Differential dijet cross-section"]
+
 
     # X axis: Mediator mass
     mmed = Variable("Resonance mass",is_independent = True,is_binned = True,units = "GeV")
@@ -75,10 +82,13 @@ def make_table_figure7(outdir):
     return table
 
 def make_table_figure12(outdir):
+    # Input provided as text file (Frederico Preiato, Giulia D'Imperio)
+    # Each columns holds one variable
     data = np.loadtxt("./input/fig12/LimitsTableObs_2016full_36-27invfb.txt")
 
     table = Table("Cross-section limits")
     table.location = "Figure 12, located on page 15."
+    table.keywords["observables"] = ["Differential dijet cross-section limits"]
     table.description = "The observed 95% CL upper limits on the product of the cross section, branching fraction, and acceptance for quark-quark, quark-gluon, and gluon-gluon type dijet resonances."
 
     # X axis: Mediator mass
@@ -109,11 +119,13 @@ def main():
 
     submission = Submission()
     submission.add_table(make_table_figure7(outdir))
-
     submission.add_table(make_table_figure12(outdir))
     submission.add_table(make_table_figure19(outdir))
     submission.read_abstract("./input/abstract.txt")
 
+    for table in submission.tables:
+        table.keywords["reactions"]=["P P --> JET JET X"]
+        table.keywords["cmenergies"]=[13000]
     submission.create_files(outdir)
 
 
