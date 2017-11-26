@@ -14,7 +14,7 @@ def make_table_figure19(outdir):
     table.description = "."
 
     table.location = "Figure 19, located on page 24."
-    table.keywords["observables"] = ["Universal quark coupling"]
+    table.keywords["observables"] = ["GV"]
 
     # X axis: Mediator mass
     mmed = Variable("$M_{Med}$")
@@ -57,7 +57,7 @@ def make_table_figure7(outdir):
     table = Table("Differential dijet cross-section")
     table.description = "Observed differential dijet cross-section."
     table.location = "Figure 7, located on page 8."
-    table.keywords["observables"] = ["Differential dijet cross-section"]
+    table.keywords["observables"] = ["DSIG/DM"]
 
 
     # X axis: Mediator mass
@@ -88,7 +88,7 @@ def make_table_figure12(outdir):
 
     table = Table("Cross-section limits")
     table.location = "Figure 12, located on page 15."
-    table.keywords["observables"] = ["Differential dijet cross-section limits"]
+    table.keywords["observables"] = ["DSIG/DM"]
     table.description = "The observed 95% CL upper limits on the product of the cross section, branching fraction, and acceptance for quark-quark, quark-gluon, and gluon-gluon type dijet resonances."
 
     # X axis: Mediator mass
