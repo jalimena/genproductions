@@ -5,51 +5,54 @@ import os
 from hepdata_lib import *
 import numpy as np
 
-def write_figure19(outdir):
+def make_table_figure19(outdir):
 
+    reader = RootFileReader("input/fig19_gq/gq_WideLimitTree.root")
 
-    table = Table("figure19")
+    table = Table("Limits on universal quark coupling")
+    table.description = "."
 
-    reader = RootFileReader("input/fig19_gq/grFinal_DMV-q_qPrime-widewithNarrow-limit.root")
+    table.location = "Figure 19, located on page 24."
+
 
     # X axis: Mediator mass
     mmed = Variable("$m_{med}$")
     mmed.is_independent = True
     mmed.is_binned = False
     mmed.units = "GeV"
-    mmed.values = reader.read_graph("graph_expected")["x"]
+    mmed.values = reader.read_tree("xsecTree","mass")
     table.add_variable(mmed)
 
     # Y axis: GQ exclusion
-    obs = Variable("Observed $g_{q}$ exclusion")
-    obs.is_independent = False
-    obs.is_binned = False
-    obs.units = ""
-    obs.values = reader.read_graph("graph_observed")["y"]
+    obs = Variable("Observed $g_{q}$ exclusion",is_independent = False,is_binned=False,units="")
+    obs.values = reader.read_tree("xsecTree","xsecULObs_PFDijet2016")
+
+    exp = Variable("Expected $g_{q}$ exclusion",is_independent = False,is_binned=False,units="")
+    exp.values = reader.read_tree("xsecTree","xsecULExp_PFDijet2016")
+
+    unc1 = Uncertainty("1 s.d.")
+    unc1.is_symmetric = False
+    unc1.set_values_up(reader.read_tree("xsecTree","xsecULExpPlus_PFDijet2016"), nominal = exp.values)
+    unc1.set_values_down(reader.read_tree("xsecTree","xsecULExpMinus_PFDijet2016"), nominal = exp.values)
+
+    unc2 = Uncertainty("2 s.d.")
+    unc2.is_symmetric = False
+    unc2.set_values_up(reader.read_tree("xsecTree","xsecULExpPlus2_PFDijet2016"), nominal = exp.values)
+    unc2.set_values_down(reader.read_tree("xsecTree","xsecULExpMinus2_PFDijet2016"), nominal = exp.values)
+
+    exp.uncertainties.append(unc1)
+    exp.uncertainties.append(unc2)
+
+    table.add_variable(exp)
     table.add_variable(obs)
 
-  #~ KEY: TGraph	graph_expected;1	
-  #~ KEY: TGraph	graph_observed;1	
-  #~ KEY: TGraphErrors	graph_expected_p1s;1	
-  #~ KEY: TGraphErrors	graph_expected_p2s;1	
-  #~ KEY: TGraphErrors	graph_expected_m1s;1	
-  #~ KEY: TGraphErrors	graph_expected_m2s;1	
-  #~ KEY: TGraph	graph_observedNarrowg_qPrime
-
-    #~ unc1 = Uncertainty("total")
-    #~ unc1.values = [item[3][1] for item in data]
-    #~ exp_full.uncertainties.append(unc1)
-
-    #~ table.add_variable(exp_full)
-
-    table.write_yaml(outdir)
-
+    return table
 def make_table_figure7(outdir):
     table = Table("Differential dijet cross-section")
     table.description = "Observed differential dijet cross-section."
     table.location = "Figure 7, located on page 8."
     data = np.loadtxt("./input/fig7/DijetSpectrum_2016full_36-27invfb.txt")
-    
+
     # X axis: Mediator mass
     mmed = Variable("Resonance mass",is_independent = True,is_binned = True,units = "GeV")
     mmed.values_low = [float(x) for x in data[:,0] - data[:,2]]
@@ -65,7 +68,7 @@ def make_table_figure7(outdir):
     xs_unc = Uncertainty("Total")
     xs_unc.values = [float(x) for x in data[:,4]]
     xs.uncertainties.append(xs_unc)
-    
+
     table.add_variable(mmed)
     table.add_variable(xs)
 
@@ -91,7 +94,7 @@ def make_table_figure12(outdir):
 
     obs_qq = Variable("95% CL upper limits, qq final state", is_independent=False, is_binned=False, units="pb")
     obs_qq.values = [float(x) for x in data[:,3]]
-    
+
     table.add_variable(mmed)
     table.add_variable(obs_gg)
     table.add_variable(obs_gq)
@@ -106,8 +109,9 @@ def main():
 
     submission = Submission()
     submission.add_table(make_table_figure7(outdir))
-    submission.add_table(make_table_figure12(outdir))
 
+    submission.add_table(make_table_figure12(outdir))
+    submission.add_table(make_table_figure19(outdir))
     submission.read_abstract("./input/abstract.txt")
 
     submission.create_files(outdir)
