@@ -12,6 +12,10 @@ EXO16052:
   script:
   - cd EXO-16-052
   - python ./write_yaml.py
+  artifacts:
+    paths:
+    - ./EXO-16-052/submission.tar.gz
+
 
 EXO16056:
   tags:
@@ -19,3 +23,6 @@ EXO16056:
   script:
   - cd EXO-16-056
   - python ./write_yaml.py
+  artifacts:
+    paths:
+    - ./EXO-16-052/submission.tar.gz
