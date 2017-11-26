@@ -8,7 +8,7 @@ import numpy as np
 def make_table_figure19(outdir):
     # Input provided as tree (Yalcin Guler)
     # Each branch holds one variable/variation
-    reader = RootFileReader("input/fig19_gq/gq_WideLimitTree.root")
+    reader = RootFileReader("input/fig19/gq_WideLimitTree.root")
 
     table = Table("Limits on universal quark coupling")
     table.description = "."
