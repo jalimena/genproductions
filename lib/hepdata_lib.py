@@ -107,7 +107,7 @@ class Table(object):
             submission["data_file"] = '{NAME}.yaml'.format(NAME=shortname)
             submission["keywords"] = []
 
-            for name,values in self.keywords.items()
+            for name,values in self.keywords.items():
                 submission["keywords"].append({"name":name,"values":values})
 
             if(len(submissionfile.read())):
