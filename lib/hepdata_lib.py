@@ -55,7 +55,8 @@ class Variable(object):
                                                 "label": unc.label})
                 else:
                     valuedict['errors'].append({"asymerror": {"minus": unc.values_down[i],
-                                                              "plus": unc.values_up[i]}})
+                                                              "plus": unc.values_up[i]},
+                                                "label": unc.label})
             tmp["values"].append(valuedict)
         return tmp
 
@@ -173,6 +174,27 @@ class Uncertainty(object):
         self.values_up = []
         self.values_down = []
 
+    def set_values_up(self, values_up, nominal=None):
+        """
+        Setter method
+
+        Can perform list subtraction relative to nominal value.
+        """
+        if(nominal):
+            self.values_up = [x-y for x,y in zip(values_up,nominal)]
+        else:
+            self.values_up = values_up
+
+    def set_values_down(self, values_down, nominal=None):
+        """Setter method
+
+        Can perform list subtraction relative to nominal value.
+        """
+        if(nominal):
+            self.values_down = [x-y for x,y in zip(values_down,nominal)]
+        else:
+            self.values_down = values_down
+
 
 class RootFileReader(object):
     """Easily extract information from ROOT histograms, graphs, etc"""
@@ -195,7 +217,7 @@ class RootFileReader(object):
             self.tfile = tfile
         else:
             raise ValueError(
-                "RootReader: Encountered type of variable passed as tfile argument: " + type(tfile))
+                "RootReader: Encountered unkonown type of variable passed as tfile argument: " + type(tfile))
 
         if(not self.tfile):
             raise IOError("RootReader: File not opened properly.")
@@ -214,3 +236,11 @@ class RootFileReader(object):
             points["y"].append(float(y))
 
         return points
+
+    def read_tree(self, path_to_tree, branchname):
+        tree = self.tfile.Get(path_to_tree)
+
+        values = []
+        for event in tree:
+            values.append(getattr(event, branchname))
+        return values
