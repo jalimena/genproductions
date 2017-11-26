@@ -6,7 +6,7 @@ before_script:
 - cd -
 - source setenv.sh
 
-EXO16052:
+EXO-16-052:
   tags:
   - cvmfs
   script:
@@ -17,7 +17,7 @@ EXO16052:
     - ./EXO-16-052/submission.tar.gz
 
 
-EXO16056:
+EXO-16-056:
   tags:
   - cvmfs
   script:
@@ -25,4 +25,4 @@ EXO16056:
   - python ./write_yaml.py
   artifacts:
     paths:
-    - ./EXO-16-052/submission.tar.gz
+    - ./EXO-16-056/submission.tar.gz
