@@ -71,7 +71,8 @@ class Table(object):
         self.variables = []
         self.description = "Example description"
         self.location = "Example location"
-
+        self.keywords = {}
+    
     def add_variable(self, variable):
         """Add a variable to the table"""
         self.variables.append(variable)
@@ -104,8 +105,10 @@ class Table(object):
             submission["description"] = self.description
             submission["location"] = self.location
             submission["data_file"] = '{NAME}.yaml'.format(NAME=shortname)
-            submission["keywords"] = [
-                {"name": "Analysis groups", "values": ["EXOTICA"]}]
+            submission["keywords"] = []
+
+            for name,values in self.keywords.items()
+                submission["keywords"].append({"name":name,"values":values})
 
             if(len(submissionfile.read())):
                 submissionfile.write("---\n")
