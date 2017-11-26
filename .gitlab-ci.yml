@@ -1,0 +1,12 @@
+before_script:
+- source setenv.sh
+
+EXO16052:
+  script:
+  - cd EXO-16-052
+  - python ./write_yaml.py
+
+EXO16056:
+  script:
+  - cd EXO-16-056
+  - python ./write_yaml.py
