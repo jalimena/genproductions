@@ -62,9 +62,12 @@ class Variable(object):
 
 
 class Table(object):
-    """A table is a collection of variables.
+    """
+    A table is a collection of variables.
+
     It also holds meta-data such as a general description,
-    the location within the paper, etc."""
+    the location within the paper, etc.
+    """
 
     def __init__(self, name):
         self.name = name
@@ -117,8 +120,11 @@ class Table(object):
 
 
 class Submission(object):
-    """Top-level object of a HEPData submission.
-    Holds all the lower-level objects and controls writing."""
+    """
+    Top-level object of a HEPData submission.
+
+    Holds all the lower-level objects and controls writing.
+    """
 
     def __init__(self):
         self.tables = []
@@ -185,7 +191,8 @@ class Uncertainty(object):
             self.values_up = values_up
 
     def set_values_down(self, values_down, nominal=None):
-        """Setter method
+        """
+        Setter method
 
         Can perform list subtraction relative to nominal value.
         """
@@ -222,7 +229,7 @@ class RootFileReader(object):
             raise IOError("RootReader: File not opened properly.")
 
     def read_graph(self, path_to_graph):
-        """Extract lists of X and Y values from a TGraph"""
+        """Extract lists of X and Y values from a TGraph."""
         graph = self.tfile.Get(path_to_graph)
 
         points = {"x": [], "y": []}
@@ -237,6 +244,7 @@ class RootFileReader(object):
         return points
 
     def read_tree(self, path_to_tree, branchname):
+        """Extract a list of values from a tree branch."""
         tree = self.tfile.Get(path_to_tree)
 
         values = []
