@@ -2,7 +2,11 @@ import os
 import fnmatch
 import yaml
 import ROOT as r
+from collections import defaultdict
 
+# Register defalut dict so that yaml knows it is a dictionary type
+from yaml.representer import Representer
+yaml.add_representer(defaultdict, Representer.represent_dict)
 
 def find_all_matching(path, pattern):
     """Utility function that works like 'find' in bash."""
@@ -39,17 +43,15 @@ class Variable(object):
         tmp["values"] = []
 
         for i in range(len(self.values_low if self.is_binned else self.values)):
-            valuedict = {}
+            valuedict = defaultdict(list)
 
             if self.is_binned:
-                valuedict["high"] = self.values_high[i]
-                valuedict["low"] = self.values_low[i]
+                valuedict["high"].append(self.values_high[i])
+                valuedict["low"].append(self.values_low[i])
             else:
                 valuedict["value"] = self.values[i]
 
             for unc in self.uncertainties:
-                if "errors" not in valuedict.keys():
-                    valuedict['errors'] = []
                 if unc.is_symmetric:
                     valuedict['errors'].append({"symerror": unc.values[i],
                                                 "label": unc.label})
@@ -232,7 +234,7 @@ class RootFileReader(object):
         """Extract lists of X and Y values from a TGraph."""
         graph = self.tfile.Get(path_to_graph)
 
-        points = {"x": [], "y": []}
+        points = defaultdict(list)
 
         for i in range(graph.GetN()):
             x = r.Double()
