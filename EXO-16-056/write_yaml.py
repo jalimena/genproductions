@@ -70,18 +70,17 @@ def make_table_figure7(outdir):
     # X axis: Mediator mass
     mmed = Variable("Resonance mass", is_independent=True,
                     is_binned=True, units="GeV")
-    mmed.values_low = [float(x) for x in data[:, 0] - data[:, 2]]
-    mmed.values_high = [float(x) for x in data[:, 0] + data[:, 3]]
+    mmed.values = zip(data[:, 0] - data[:, 2], data[:, 0] + data[:, 3])
 
     # Y axis: Differential cross-section
     xs = Variable("Observed")
     xs.is_independent = False
     xs.is_binned = False
     xs.units = "pb/GeV"
-    xs.values = [float(x) for x in data[:, 1]]
+    xs.values = data[:, 1]
 
     xs_unc = Uncertainty("Total")
-    xs_unc.values = [float(x) for x in data[:, 4]]
+    xs_unc.values = data[:, 4]
     xs.uncertainties.append(xs_unc)
 
     table.add_variable(mmed)
@@ -103,20 +102,20 @@ def make_table_figure12(outdir):
     # X axis: Mediator mass
     mmed = Variable("Resonance mass", is_independent=True,
                     is_binned=False, units="GeV")
-    mmed.values = [float(x) for x in data[:, 0]]
+    mmed.values = data[:, 0]
 
     # Y axis: Observed limit
     obs_gg = Variable("95% CL upper limits, gg final state",
                       is_independent=False, is_binned=False, units="pb")
-    obs_gg.values = [float(x) for x in data[:, 1]]
+    obs_gg.values = data[:, 1]
 
     obs_gq = Variable("95% CL upper limits, gq final state",
                       is_independent=False, is_binned=False, units="pb")
-    obs_gq.values = [float(x) for x in data[:, 2]]
+    obs_gq.values = data[:, 2]
 
     obs_qq = Variable("95% CL upper limits, qq final state",
                       is_independent=False, is_binned=False, units="pb")
-    obs_qq.values = [float(x) for x in data[:, 3]]
+    obs_qq.values = data[:, 3]
 
     table.add_variable(mmed)
     table.add_variable(obs_gg)

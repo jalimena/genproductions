@@ -32,9 +32,16 @@ class Variable(object):
 
         self.units = units
         self.values = []
-        self.values_low = []
-        self.values_high = []
         self.uncertainties = []
+        self.digits = 2
+
+    def set_values(self,values):
+        self._values = map(float,values)
+
+    def get_values(self):
+        return self._values
+
+    values = property(get_values,set_values)
 
     def make_dict(self):
         tmp = {}
@@ -42,22 +49,22 @@ class Variable(object):
 
         tmp["values"] = []
 
-        for i in range(len(self.values_low if self.is_binned else self.values)):
+        for i in range(len(self.values)):
             valuedict = defaultdict(list)
 
             if self.is_binned:
-                valuedict["high"].append(self.values_high[i])
-                valuedict["low"].append(self.values_low[i])
+                valuedict["high"].append(round(self.values[i][0],self.digits))
+                valuedict["low"].append(round(self.values[i][1], self.digits))
             else:
-                valuedict["value"] = self.values[i]
+                valuedict["value"] = round(self.values[i], self.digits)
 
             for unc in self.uncertainties:
                 if unc.is_symmetric:
-                    valuedict['errors'].append({"symerror": unc.values[i],
+                    valuedict['errors'].append({"symerror": round(unc.values[i],self.digits),
                                                 "label": unc.label})
                 else:
-                    valuedict['errors'].append({"asymerror": {"minus": unc.values_down[i],
-                                                              "plus": unc.values_up[i]},
+                    valuedict['errors'].append({"asymerror": {"minus": round(unc.values_down[i],self.digits),
+                                                              "plus": round(unc.values_up[i],self.digits)},
                                                 "label": unc.label})
             tmp["values"].append(valuedict)
         return tmp
