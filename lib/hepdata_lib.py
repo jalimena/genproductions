@@ -2,7 +2,11 @@ import os
 import fnmatch
 import yaml
 import ROOT as r
+from collections import defaultdict
 
+# Register defalut dict so that yaml knows it is a dictionary type
+from yaml.representer import Representer
+yaml.add_representer(defaultdict, Representer.represent_dict)
 
 def find_all_matching(path, pattern):
     """Utility function that works like 'find' in bash."""
@@ -28,9 +32,19 @@ class Variable(object):
 
         self.units = units
         self.values = []
-        self.values_low = []
-        self.values_high = []
         self.uncertainties = []
+        self.digits = 5
+
+    def set_values(self,values):
+        if(self.is_binned):
+            self._values = map(lambda x: (float(x[0]), float(x[1])),values)
+        else:
+            self._values = map(float,values)
+
+    def get_values(self):
+        return self._values
+
+    values = property(get_values,set_values)
 
     def make_dict(self):
         tmp = {}
@@ -38,24 +52,22 @@ class Variable(object):
 
         tmp["values"] = []
 
-        for i in range(len(self.values_low if self.is_binned else self.values)):
-            valuedict = {}
+        for i in range(len(self.values)):
+            valuedict = defaultdict(list)
 
             if self.is_binned:
-                valuedict["high"] = self.values_high[i]
-                valuedict["low"] = self.values_low[i]
+                valuedict["low"] = round(self.values[i][0],self.digits)
+                valuedict["high"] = round(self.values[i][1], self.digits)
             else:
-                valuedict["value"] = self.values[i]
+                valuedict["value"] = round(self.values[i], self.digits)
 
             for unc in self.uncertainties:
-                if "errors" not in valuedict.keys():
-                    valuedict['errors'] = []
                 if unc.is_symmetric:
-                    valuedict['errors'].append({"symerror": unc.values[i],
+                    valuedict['errors'].append({"symerror": round(unc.values[i],self.digits),
                                                 "label": unc.label})
                 else:
-                    valuedict['errors'].append({"asymerror": {"minus": unc.values_down[i],
-                                                              "plus": unc.values_up[i]},
+                    valuedict['errors'].append({"asymerror": {"minus": round(unc.values[i][0],self.digits),
+                                                              "plus": round(unc.values[i][1],self.digits)},
                                                 "label": unc.label})
             tmp["values"].append(valuedict)
         return tmp
@@ -175,32 +187,25 @@ class Uncertainty(object):
     def __init__(self, label):
         self.label = label
         self.is_symmetric = True
-        self.values = []
-        self.values_up = []
-        self.values_down = []
+        self._values = []
 
-    def set_values_up(self, values_up, nominal=None):
+    def set_values(self, values, nominal=None):
         """
         Setter method
 
         Can perform list subtraction relative to nominal value.
         """
         if(nominal):
-            self.values_up = [x - y for x, y in zip(values_up, nominal)]
+            tmp = []
+            for (down,up), nominal in zip(values,nominal):
+                tmp.append((down-nominal,up-nominal))
+            self._values = tmp
         else:
-            self.values_up = values_up
+            self._values = values
 
-    def set_values_down(self, values_down, nominal=None):
-        """
-        Setter method
-
-        Can perform list subtraction relative to nominal value.
-        """
-        if(nominal):
-            self.values_down = [x - y for x, y in zip(values_down, nominal)]
-        else:
-            self.values_down = values_down
-
+    def get_values(self):
+        return self._values
+    values = property(get_values,set_values)
 
 class RootFileReader(object):
     """Easily extract information from ROOT histograms, graphs, etc"""
@@ -232,7 +237,7 @@ class RootFileReader(object):
         """Extract lists of X and Y values from a TGraph."""
         graph = self.tfile.Get(path_to_graph)
 
-        points = {"x": [], "y": []}
+        points = defaultdict(list)
 
         for i in range(graph.GetN()):
             x = r.Double()

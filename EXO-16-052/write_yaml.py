@@ -31,8 +31,7 @@ The observed numbers of events in each bin are also included. The last bin inclu
 
     # First variable/column ---> MET
     met = Variable("MET", is_independent=True, is_binned=True, units="GeV")
-    met.values_low = [item[0][0] for item in data]
-    met.values_high = [item[0][1] for item in data]
+    met.values = [item[0] for item in data]
 
     # Second variable/column ---> Number of observed events
     obs = Variable("Data", is_independent=False,
