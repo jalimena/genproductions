@@ -39,18 +39,22 @@ def make_table_figure19(outdir):
     unc1.set_values(
         zip(
             reader.read_tree(
-                "xsecTree", "xsecULExpPlus_PFDijet2016"
+                "xsecTree", "xsecULExpMinus_PFDijet2016"
             ),
             reader.read_tree(
-                "xsecTree", "xsecULExpMinus_PFDijet2016"),
-        ),
-        nominal=exp.values)
+                "xsecTree", "xsecULExpPlus_PFDijet2016"
+            )
+            ), nominal=exp.values)
 
     unc2 = Uncertainty("2 s.d.")
     unc2.is_symmetric = False
-    unc2.set_values(zip(reader.read_tree(
-        "xsecTree", "xsecULExpPlus2_PFDijet2016"), reader.read_tree(
-        "xsecTree", "xsecULExpMinus2_PFDijet2016")), nominal=exp.values)
+    unc2.set_values(
+        zip(
+            reader.read_tree(
+                "xsecTree", "xsecULExpMinus2_PFDijet2016"
+            ), reader.read_tree(
+                "xsecTree", "xsecULExpPlus2_PFDijet2016"
+            )), nominal=exp.values)
 
     exp.uncertainties.append(unc1)
     exp.uncertainties.append(unc2)
