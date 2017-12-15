@@ -198,7 +198,7 @@ class Uncertainty(object):
         if(nominal):
             tmp = []
             for (down,up), nominal in zip(values,nominal):
-                tmp.append((nominal-down,nominal+up))
+                tmp.append((down-nominal,up-nominal))
             self._values = tmp
         else:
             self._values = values
