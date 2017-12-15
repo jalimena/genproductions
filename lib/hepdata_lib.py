@@ -36,7 +36,10 @@ class Variable(object):
         self.digits = 2
 
     def set_values(self,values):
-        self._values = map(float,values)
+        if(is_binned):
+            self._values = map(float,values)
+        else:
+            self._values = map(float,values)
 
     def get_values(self):
         return self._values
@@ -63,8 +66,8 @@ class Variable(object):
                     valuedict['errors'].append({"symerror": round(unc.values[i],self.digits),
                                                 "label": unc.label})
                 else:
-                    valuedict['errors'].append({"asymerror": {"minus": round(unc.values_down[i],self.digits),
-                                                              "plus": round(unc.values_up[i],self.digits)},
+                    valuedict['errors'].append({"asymerror": {"minus": round(unc.values[i][0],self.digits),
+                                                              "plus": round(unc.values[i][1],self.digits)},
                                                 "label": unc.label})
             tmp["values"].append(valuedict)
         return tmp
@@ -185,31 +188,24 @@ class Uncertainty(object):
         self.label = label
         self.is_symmetric = True
         self.values = []
-        self.values_up = []
-        self.values_down = []
 
-    def set_values_up(self, values_up, nominal=None):
+    def set_values(self, values, nominal=None):
         """
         Setter method
 
         Can perform list subtraction relative to nominal value.
         """
         if(nominal):
-            self.values_up = [x - y for x, y in zip(values_up, nominal)]
+            tmp = []
+            for (down,up), nominal in zip(values,nominal):
+                tmp.append((nominal-down,nominal+up))
+            self._values = tmp
         else:
-            self.values_up = values_up
+            self._values = values
 
-    def set_values_down(self, values_down, nominal=None):
-        """
-        Setter method
-
-        Can perform list subtraction relative to nominal value.
-        """
-        if(nominal):
-            self.values_down = [x - y for x, y in zip(values_down, nominal)]
-        else:
-            self.values_down = values_down
-
+    def get_values(self):
+        return self._values
+    values = property(set_values,get_values)
 
 class RootFileReader(object):
     """Easily extract information from ROOT histograms, graphs, etc"""
