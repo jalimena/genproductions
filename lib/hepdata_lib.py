@@ -36,8 +36,8 @@ class Variable(object):
         self.digits = 2
 
     def set_values(self,values):
-        if(is_binned):
-            self._values = map(float,values)
+        if(self.is_binned):
+            self._values = map(lambda x: (float(x[0]), float(x[1])),values)
         else:
             self._values = map(float,values)
 
@@ -56,8 +56,8 @@ class Variable(object):
             valuedict = defaultdict(list)
 
             if self.is_binned:
-                valuedict["high"].append(round(self.values[i][0],self.digits))
-                valuedict["low"].append(round(self.values[i][1], self.digits))
+                valuedict["low"] = round(self.values[i][0],self.digits)
+                valuedict["high"] = round(self.values[i][1], self.digits)
             else:
                 valuedict["value"] = round(self.values[i], self.digits)
 
@@ -187,7 +187,7 @@ class Uncertainty(object):
     def __init__(self, label):
         self.label = label
         self.is_symmetric = True
-        self.values = []
+        self._values = []
 
     def set_values(self, values, nominal=None):
         """
@@ -205,7 +205,7 @@ class Uncertainty(object):
 
     def get_values(self):
         return self._values
-    values = property(set_values,get_values)
+    values = property(get_values,set_values)
 
 class RootFileReader(object):
     """Easily extract information from ROOT histograms, graphs, etc"""
