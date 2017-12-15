@@ -33,7 +33,7 @@ class Variable(object):
         self.units = units
         self.values = []
         self.uncertainties = []
-        self.digits = 2
+        self.digits = 5
 
     def set_values(self,values):
         if(self.is_binned):
