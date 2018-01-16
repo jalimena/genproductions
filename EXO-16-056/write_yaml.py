@@ -11,10 +11,10 @@ def make_table_figure19(outdir):
     # Each branch holds one variable/variation
     reader = RootFileReader("input/fig19/gq_WideLimitTree.root")
 
-    table = Table("Limits on universal quark coupling")
-    table.description = "."
+    table = Table("Coupling limits (DM mediator)")
+    table.description = "The observed and expected 95% CL upper limits on the universal quark coupling $g_{q}$ as a function of resonance mass for a vector mediator of interactions between quarks and dark matter."
 
-    table.location = "Figure 19, located on page 24."
+    table.location = "Data from Figure 19, located on page 24."
     table.keywords["observables"] = ["GV"]
 
     # X axis: Mediator mass
@@ -30,9 +30,13 @@ def make_table_figure19(outdir):
                    is_independent=False, is_binned=False, units="")
     obs.values = reader.read_tree("xsecTree", "xsecULObs_PFDijet2016")
 
-    exp = Variable("Expected $g_{q}$ exclusion",
-                   is_independent=False, is_binned=False, units="")
-    exp.values = reader.read_tree("xsecTree", "xsecULExp_PFDijet2016")
+    exp_1sd = Variable("Expected $g_{q}$ exclusion $\pm$ 1 s.d.",
+                       is_independent=False, is_binned=False, units="")
+    exp_1sd.values = reader.read_tree("xsecTree", "xsecULExp_PFDijet2016")
+
+    exp_2sd = Variable("Expected $g_{q}$ exclusion $\pm$ 2 s.d.",
+                       is_independent=False, is_binned=False, units="")
+    exp_2sd.values = reader.read_tree("xsecTree", "xsecULExp_PFDijet2016")
 
     unc1 = Uncertainty("1 s.d.")
     unc1.is_symmetric = False
@@ -44,7 +48,7 @@ def make_table_figure19(outdir):
             reader.read_tree(
                 "xsecTree", "xsecULExpPlus_PFDijet2016"
             )
-            ), nominal=exp.values)
+        ), nominal=exp_1sd.values)
 
     unc2 = Uncertainty("2 s.d.")
     unc2.is_symmetric = False
@@ -54,12 +58,13 @@ def make_table_figure19(outdir):
                 "xsecTree", "xsecULExpMinus2_PFDijet2016"
             ), reader.read_tree(
                 "xsecTree", "xsecULExpPlus2_PFDijet2016"
-            )), nominal=exp.values)
+            )), nominal=exp_2sd.values)
 
-    exp.uncertainties.append(unc1)
-    exp.uncertainties.append(unc2)
+    exp_1sd.uncertainties.append(unc1)
+    exp_2sd.uncertainties.append(unc2)
 
-    table.add_variable(exp)
+    table.add_variable(exp_1sd)
+    table.add_variable(exp_2sd)
     table.add_variable(obs)
 
     return table
@@ -72,7 +77,7 @@ def make_table_figure7(outdir):
 
     table = Table("Differential dijet cross-section")
     table.description = "Observed differential dijet cross-section."
-    table.location = "Figure 7, located on page 8."
+    table.location = "Data from Figure 7, located on page 8."
     table.keywords["observables"] = ["DSIG/DM"]
 
     # X axis: Mediator mass
@@ -102,11 +107,6 @@ def make_table_figure12(outdir):
     # Each columns holds one variable
     data = np.loadtxt("./input/fig12/LimitsTableObs_2016full_36-27invfb.txt")
 
-    table = Table("Cross-section limits")
-    table.location = "Figure 12, located on page 15."
-    table.keywords["observables"] = ["DSIG/DM"]
-    table.description = "The observed 95% CL upper limits on the product of the cross section, branching fraction, and acceptance for quark-quark, quark-gluon, and gluon-gluon type dijet resonances."
-
     # X axis: Mediator mass
     mmed = Variable("Resonance mass", is_independent=True,
                     is_binned=False, units="GeV")
@@ -125,12 +125,99 @@ def make_table_figure12(outdir):
                       is_independent=False, is_binned=False, units="pb")
     obs_qq.values = data[:, 3]
 
+    table = Table("Cross-section limits")
+    table.location = "Data from Figure 12, located on page 15."
+    table.keywords["observables"] = ["DSIG/DM"]
+    table.description = "The observed 95% CL upper limits on the product of the cross section, branching fraction, and acceptance for quark-quark, quark-gluon, and gluon-gluon type dijet resonances."
+
     table.add_variable(mmed)
     table.add_variable(obs_gg)
     table.add_variable(obs_gq)
     table.add_variable(obs_qq)
 
     return table
+
+
+def make_table_figure13(outdir):
+
+    reader = RootFileReader("input/fig13/save.root")
+    data_obs_low = reader.read_graph("observed_low")
+    data_obs_high = reader.read_graph("observed_high")
+
+    data_exp_low = reader.read_graph("expected_low")
+    data_exp_1s_low_up = reader.read_graph("expected_1s_low_up")
+    data_exp_1s_low_down = reader.read_graph("expected_1s_low_down")
+    data_exp_2s_low_up = reader.read_graph("expected_2s_low_up")
+    data_exp_2s_low_down = reader.read_graph("expected_2s_low_down")
+
+    data_exp_high = reader.read_graph("expected_high")
+    data_exp_1s_high_up = reader.read_graph("expected_1s_high_up")
+    data_exp_1s_high_down = reader.read_graph("expected_1s_high_down")
+    data_exp_2s_high_up = reader.read_graph("expected_2s_high_up")
+    data_exp_2s_high_down = reader.read_graph("expected_2s_high_down")
+
+    assert(data_obs_low["x"] == data_exp_low["x"])
+    assert(data_obs_high["x"] == data_exp_high["x"])
+
+    # X axis: Mediator mass
+    mmed = Variable("Resonance mass", is_independent=True,
+                    is_binned=False, units="GeV")
+    mmed.values = data_obs_low["x"] + data_obs_high["x"]
+
+    obs = Variable("Observed $g_{q}'$ exclusion",
+                   is_independent=False, is_binned=False, units="1")
+    obs.values = data_obs_low["y"] + data_obs_high["y"]
+
+    exp_1sd = Variable("Expected $g_{q}'$ exclusion $\pm$ 1 s.d.",
+                       is_independent=False, is_binned=False, units="1")
+    exp_1sd.values = data_exp_low["y"] + data_exp_high["y"]
+
+    exp_2sd = Variable("Expected $g_{q}'$ exclusion $\pm$ 2 s.d.",
+                       is_independent=False, is_binned=False, units="1")
+    exp_2sd.values = data_exp_low["y"] + data_exp_high["y"]
+
+    unc1 = Uncertainty("1 s.d.")
+    unc1.is_symmetric = False
+    unc1.set_values(zip(data_exp_1s_low_down["y"] + data_exp_1s_high_down["y"],
+                        data_exp_1s_low_up["y"] + data_exp_1s_high_up["y"]), nominal=exp_1sd.values)
+
+    unc2 = Uncertainty("2 s.d.")
+    unc2.is_symmetric = False
+    unc2.set_values(zip(data_exp_2s_low_down["y"] + data_exp_2s_high_down["y"],
+                        data_exp_2s_low_up["y"] + data_exp_2s_high_up["y"]), nominal=exp_2sd.values)
+
+    exp_1sd.uncertainties.append(unc1)
+    exp_2sd.uncertainties.append(unc2)
+
+    table = Table("Coupling limits (Quark only)")
+    table.location = "Data from Figure 13, located on page 17."
+    table.keywords["observables"] = ["GQ"]
+    table.description = "The observed and expected 95% CL upper limits on the universal quark coupling $g_{q}'$ as a function of resonance mass for a leptophobic Z' resonance that only couples to quarks."
+
+    table.add_variable(mmed)
+    table.add_variable(obs)
+    table.add_variable(exp_1sd)
+    table.add_variable(exp_2sd)
+
+    return table
+
+    #~ def parse_tylers_graph(data):
+    #~ '''Get upper and lower quantiles from an unordered set of data.
+    #~ It is assumed that there are two y valeus for each x value.
+    #~ Y values are sorted by x value and the bigger/smaller one of the two y values is used for up/down quantiles.'''
+    #~ split = defaultdict(list)
+    #~ for x,y in zip(data["x"],data["y"]):
+    #~ split[x].append(y)
+
+    #~ for key in sorted(split.keys()):
+    #~ print key, split[key]
+    #~ list_unc = []
+    #~ for entry in split.values():
+    #~ print entry
+    #~ assert(len(entry)==2)
+    #~ list_unc.append(tuple(sorted(entry)))
+
+    #~ return list_unc
 
 
 def main():
@@ -141,6 +228,7 @@ def main():
     submission.add_table(make_table_figure7(outdir))
     submission.add_table(make_table_figure12(outdir))
     submission.add_table(make_table_figure19(outdir))
+    submission.add_table(make_table_figure13(outdir))
     submission.read_abstract("./input/abstract.txt")
 
     for table in submission.tables:
