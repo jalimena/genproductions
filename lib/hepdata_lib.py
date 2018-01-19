@@ -3,6 +3,7 @@ import fnmatch
 import yaml
 import ROOT as r
 from collections import defaultdict
+import math
 
 # Register defalut dict so that yaml knows it is a dictionary type
 from yaml.representer import Representer
@@ -18,6 +19,16 @@ def find_all_matching(path, pattern):
             if fnmatch.fnmatch(thisfile, pattern):
                 result.append(os.path.join(root, thisfile))
     return result
+
+def relative_round(value,relative_digits):
+    """Rounds to a given relative precision"""
+    if(value==0): return 0
+    value_precision = math.ceil(math.log10(abs(value)))
+
+    absolute_digits = - value_precision  + relative_digits
+    if(absolute_digits < 0 ): absolute_digits = 0
+
+    return round(value,int(absolute_digits))
 
 
 class Variable(object):
@@ -56,18 +67,18 @@ class Variable(object):
             valuedict = defaultdict(list)
 
             if self.is_binned:
-                valuedict["low"] = round(self.values[i][0],self.digits)
-                valuedict["high"] = round(self.values[i][1], self.digits)
+                valuedict["low"] = relative_round(self.values[i][0],self.digits)
+                valuedict["high"] = relative_round(self.values[i][1],self.digits)
             else:
-                valuedict["value"] = round(self.values[i], self.digits)
+                valuedict["value"] = relative_round(self.values[i],self.digits)
 
             for unc in self.uncertainties:
                 if unc.is_symmetric:
-                    valuedict['errors'].append({"symerror": round(unc.values[i],self.digits),
+                    valuedict['errors'].append({"symerror": relative_round(unc.values[i],self.digits),
                                                 "label": unc.label})
                 else:
-                    valuedict['errors'].append({"asymerror": {"minus": round(unc.values[i][0],self.digits),
-                                                              "plus": round(unc.values[i][1],self.digits)},
+                    valuedict['errors'].append({"asymerror": {"minus": relative_round(unc.values[i][0],self.digits),
+                                                              "plus": relative_round(unc.values[i][1],self.digits)},
                                                 "label": unc.label})
             tmp["values"].append(valuedict)
         return tmp
