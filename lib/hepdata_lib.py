@@ -23,6 +23,7 @@ def find_all_matching(path, pattern):
 def relative_round(value,relative_digits):
     """Rounds to a given relative precision"""
     if(value==0): return 0
+    if(type(value)==str): return value
     value_precision = math.ceil(math.log10(abs(value)))
 
     absolute_digits = - value_precision  + relative_digits
