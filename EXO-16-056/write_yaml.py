@@ -119,7 +119,7 @@ def make_table_figure7_right(outdir):
     # Each columns holds one variable or uncertainty
     data = np.loadtxt("./input/fig7/DijetSpectrum_2016full_36-27invfb.txt")
 
-    table = Table("Differential dijet cross-section (High mass)")
+    table = Table("Differential dijet cross-section (High mass analysis)")
     table.description = "Observed differential dijet cross-section."
     table.location = "Data from Figure 7 (right), located on page 8."
     table.keywords["observables"] = ["DSIG/DM"]
