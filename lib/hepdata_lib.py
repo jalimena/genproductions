@@ -215,8 +215,8 @@ class Uncertainty(object):
         else:
             if( not self.is_symmetric):
                 try:
-                    assert(all([ x[1] >= 0 for x in values)
-                    assert(all([ x[0] <= 0 for x in values)
+                    assert(all([ x[1] >= 0 for x in values]))
+                    assert(all([ x[0] <= 0 for x in values]))
                 except AssertionError:
                     raise ValueError("Uncertainty::set_values: Wrong signs detected! First element of uncertainty tuple should be <=0, second >=0.")
 
