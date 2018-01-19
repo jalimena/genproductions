@@ -76,35 +76,79 @@ def make_table_figure19(outdir):
     return table
 
 
-def make_table_figure7(outdir):
+def make_table_figure7_left(outdir):
     # Input provided as text file (Frederico Preiato, Giulia D'Imperio)
     # Each columns holds one variable or uncertainty
     data = np.loadtxt("./input/fig7/DijetSpectrum_2016full_36-27invfb.txt")
 
-    table = Table("Differential dijet cross-section")
+    table = Table("Differential dijet cross-section (Low mass analysis)")
     table.description = "Observed differential dijet cross-section."
-    table.location = "Data from Figure 7, located on page 8."
+    table.location = "Data from Figure 7 (left), located on page 8."
     table.keywords["observables"] = ["DSIG/DM"]
+
+    # Border between low and high mass entries
+    border = 25
+
 
     # X axis: Mediator mass
     mmed = Variable("Dijet mass", is_independent=True,
                     is_binned=True, units="GeV")
     mmed.values = zip(data[:, 0] - data[:, 2], data[:, 0] + data[:, 3])
+    mmed.values = mmed.values[:border]
 
-    # Y axis: Differential cross-section
-    xs = Variable("Observed")
-    xs.is_independent = False
-    xs.is_binned = False
-    xs.units = "pb/TeV"
+    # Low mass analysis
+    xs_low = Variable("Observed")
+    xs_low.is_independent = False
+    xs_low.is_binned = False
+    xs_low.units = "pb/TeV"
+
     # Multiply by a thousand to go from pb / GeV -> pb / TeV
-    xs.values = 1e3 * data[:, 1]
+    xs_low.values = list(1e3 * data[:border, 1])
 
-    xs_unc = Uncertainty("Total")
-    xs_unc.values = data[:, 4]
-    xs.uncertainties.append(xs_unc)
+    xs_low_unc = Uncertainty("Total")
+    xs_low_unc.values = list(1e3 * data[:border, 4])
+
+    xs_low.uncertainties.append(xs_low_unc)
 
     table.add_variable(mmed)
-    table.add_variable(xs)
+    table.add_variable(xs_low)
+    return table
+
+def make_table_figure7_right(outdir):
+    # Input provided as text file (Frederico Preiato, Giulia D'Imperio)
+    # Each columns holds one variable or uncertainty
+    data = np.loadtxt("./input/fig7/DijetSpectrum_2016full_36-27invfb.txt")
+
+    table = Table("Differential dijet cross-section (High mass)")
+    table.description = "Observed differential dijet cross-section."
+    table.location = "Data from Figure 7 (right), located on page 8."
+    table.keywords["observables"] = ["DSIG/DM"]
+
+    # Border between low and high mass entries
+    border = 25
+
+    # X axis: Mediator mass
+    mmed = Variable("Dijet mass", is_independent=True,
+                    is_binned=True, units="GeV")
+    mmed.values = zip(data[:, 0] - data[:, 2], data[:, 0] + data[:, 3])
+    mmed.values = mmed.values[border:]
+
+    # Low mass analysis
+    xs_high = Variable("Observed")
+    xs_high.is_independent = False
+    xs_high.is_binned = False
+    xs_high.units = "pb/TeV"
+
+    # Multiply by a thousand to go from pb / GeV -> pb / TeV
+    xs_high.values = list(1e3 * data[border:, 1])
+
+    xs_high_unc = Uncertainty("Total")
+    xs_high_unc.values = list(1e3 * data[border:, 4])
+
+    xs_high.uncertainties.append(xs_high_unc)
+
+    table.add_variable(mmed)
+    table.add_variable(xs_high)
 
     return table
 
@@ -232,7 +276,8 @@ def main():
     outdir = "./submission/"
 
     submission = Submission()
-    submission.add_table(make_table_figure7(outdir))
+    submission.add_table(make_table_figure7_left(outdir))
+    submission.add_table(make_table_figure7_right(outdir))
     submission.add_table(make_table_figure12(outdir))
     submission.add_table(make_table_figure19(outdir))
     submission.add_table(make_table_figure13(outdir))
