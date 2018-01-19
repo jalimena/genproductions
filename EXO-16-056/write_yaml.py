@@ -81,7 +81,7 @@ def make_table_figure7(outdir):
     table.keywords["observables"] = ["DSIG/DM"]
 
     # X axis: Mediator mass
-    mmed = Variable("Resonance mass", is_independent=True,
+    mmed = Variable("Dijet mass", is_independent=True,
                     is_binned=True, units="GeV")
     mmed.values = zip(data[:, 0] - data[:, 2], data[:, 0] + data[:, 3])
 
@@ -89,8 +89,9 @@ def make_table_figure7(outdir):
     xs = Variable("Observed")
     xs.is_independent = False
     xs.is_binned = False
-    xs.units = "pb/GeV"
-    xs.values = data[:, 1]
+    xs.units = "pb/TeV"
+    # Multiply by a thousand to go from pb / GeV -> pb / TeV
+    xs.values = 1e3 * data[:, 1]
 
     xs_unc = Uncertainty("Total")
     xs_unc.values = data[:, 4]
