@@ -196,10 +196,10 @@ class Uncertainty(object):
     The list entries are the uncertainty for each of the list entries in the corresponding Variable.
     """
 
-    def __init__(self, label):
+    def __init__(self, label, is_symmetric=True):
         self.label = label
-        self.is_symmetric = True
-        self._values = []
+        self.is_symmetric = is_symmetric
+        self.values = []
 
     def set_values(self, values, nominal=None):
         """
