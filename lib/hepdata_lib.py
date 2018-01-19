@@ -51,7 +51,7 @@ class Variable(object):
         if(self.is_binned):
             self._values = map(lambda x: (float(x[0]), float(x[1])),values)
         else:
-            self._values = map(float,values)
+            self._values = map(lambda x: x if type(x)==str else float(x),values)
 
     def get_values(self):
         return self._values
