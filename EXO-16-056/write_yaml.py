@@ -30,6 +30,12 @@ def make_table_figure19(outdir):
                    is_independent=False, is_binned=False, units="")
     obs.values = reader.read_tree("xsecTree", "xsecULObs_PFDijet2016")
 
+    # For 4.1 TeV, there is no observed limit
+    # The input file incorrectly says "1" here
+    # So we just replace that entry by "-"
+    assert(obs.values[-1] == 1)
+    obs.values[-1] = "-"
+
     exp_1sd = Variable("Expected $g_{q}$ exclusion $\pm$ 1 s.d.",
                        is_independent=False, is_binned=False, units="")
     exp_1sd.values = reader.read_tree("xsecTree", "xsecULExp_PFDijet2016")
