@@ -6,6 +6,10 @@ before_script:
 - cd -
 - source setenv.sh
 
+Tests:
+  script:
+  - for file in ./tests/test*.py; do python ${file}; done
+
 EXO-16-052:
   tags:
   - cvmfs
