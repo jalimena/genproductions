@@ -9,6 +9,7 @@ import math
 from yaml.representer import Representer
 yaml.add_representer(defaultdict, Representer.represent_dict)
 
+
 def find_all_matching(path, pattern):
     """Utility function that works like 'find' in bash."""
     if not os.path.exists(path):
@@ -20,16 +21,20 @@ def find_all_matching(path, pattern):
                 result.append(os.path.join(root, thisfile))
     return result
 
-def relative_round(value,relative_digits):
+
+def relative_round(value, relative_digits):
     """Rounds to a given relative precision"""
-    if(value==0): return 0
-    if(type(value)==str): return value
+    if(value == 0):
+        return 0
+    if(type(value) == str):
+        return value
     value_precision = math.ceil(math.log10(abs(value)))
 
-    absolute_digits = - value_precision  + relative_digits
-    if(absolute_digits < 0 ): absolute_digits = 0
+    absolute_digits = - value_precision + relative_digits
+    if(absolute_digits < 0):
+        absolute_digits = 0
 
-    return round(value,int(absolute_digits))
+    return round(value, int(absolute_digits))
 
 
 class Variable(object):
@@ -47,23 +52,25 @@ class Variable(object):
         self.uncertainties = []
         self.digits = 5
 
-    def set_values(self,values):
+    def set_values(self, values):
         if(self.is_binned):
-            self._values = map(lambda x: (float(x[0]), float(x[1])),values)
+            self._values = map(lambda x: (float(x[0]), float(x[1])), values)
         else:
-            self._values = map(lambda x: x if type(x)==str else float(x),values)
+            self._values = map(lambda x: x if type(x) ==
+                               str else float(x), values)
 
     def get_values(self):
         return self._values
 
-    values = property(get_values,set_values)
+    values = property(get_values, set_values)
 
-    def scale_values(self,factor):
+    def scale_values(self, factor):
         """Multiply each value by constant factor. Also applies to uncertainties."""
         if(not self.is_binned):
-            self.set_values([factor * x for x in self.get_values() ])
+            self.set_values([factor * x for x in self.get_values()])
         else:
-            self.set_values([(factor * x[0], factor * x[1]) for x in self.get_values() ])
+            self.set_values([(factor * x[0], factor * x[1])
+                             for x in self.get_values()])
 
         for unc in self.uncertainties:
             unc.scale_values(factor)
@@ -78,18 +85,21 @@ class Variable(object):
             valuedict = defaultdict(list)
 
             if self.is_binned:
-                valuedict["low"] = relative_round(self.values[i][0],self.digits)
-                valuedict["high"] = relative_round(self.values[i][1],self.digits)
+                valuedict["low"] = relative_round(
+                    self.values[i][0], self.digits)
+                valuedict["high"] = relative_round(
+                    self.values[i][1], self.digits)
             else:
-                valuedict["value"] = relative_round(self.values[i],self.digits)
+                valuedict["value"] = relative_round(
+                    self.values[i], self.digits)
 
             for unc in self.uncertainties:
                 if unc.is_symmetric:
-                    valuedict['errors'].append({"symerror": relative_round(unc.values[i],self.digits),
+                    valuedict['errors'].append({"symerror": relative_round(unc.values[i], self.digits),
                                                 "label": unc.label})
                 else:
-                    valuedict['errors'].append({"asymerror": {"minus": relative_round(unc.values[i][0],self.digits),
-                                                              "plus": relative_round(unc.values[i][1],self.digits)},
+                    valuedict['errors'].append({"asymerror": {"minus": relative_round(unc.values[i][0], self.digits),
+                                                              "plus": relative_round(unc.values[i][1], self.digits)},
                                                 "label": unc.label})
             tmp["values"].append(valuedict)
         return tmp
@@ -219,29 +229,32 @@ class Uncertainty(object):
         """
         if(nominal):
             tmp = []
-            for (down,up), nominal in zip(values,nominal):
-                tmp.append((down-nominal,up-nominal))
+            for (down, up), nominal in zip(values, nominal):
+                tmp.append((down - nominal, up - nominal))
             self._values = tmp
         else:
-            if( not self.is_symmetric):
+            if(not self.is_symmetric):
                 try:
-                    assert(all([ x[1] >= 0 for x in values]))
-                    assert(all([ x[0] <= 0 for x in values]))
+                    assert(all([x[1] >= 0 for x in values]))
+                    assert(all([x[0] <= 0 for x in values]))
                 except AssertionError:
-                    raise ValueError("Uncertainty::set_values: Wrong signs detected! First element of uncertainty tuple should be <=0, second >=0.")
+                    raise ValueError(
+                        "Uncertainty::set_values: Wrong signs detected! First element of uncertainty tuple should be <=0, second >=0.")
 
             self._values = values
 
     def get_values(self):
         return self._values
-    values = property(get_values,set_values)
+    values = property(get_values, set_values)
 
-    def scale_values(self,factor):
+    def scale_values(self, factor):
         """Multiply each value by constant factor."""
         if(self.is_symmetric):
-            self.set_values([factor * x for x in self.get_values() ])
+            self.set_values([factor * x for x in self.get_values()])
         else:
-            self.set_values([(factor * x[0], factor * x[1]) for x in self.get_values() ])
+            self.set_values([(factor * x[0], factor * x[1])
+                             for x in self.get_values()])
+
 
 class RootFileReader(object):
     """Easily extract information from ROOT histograms, graphs, etc"""

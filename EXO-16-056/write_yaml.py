@@ -89,7 +89,6 @@ def make_table_figure7_left(outdir):
     # Border between low and high mass entries
     border = 25
 
-
     # X axis: Mediator mass
     mmed = Variable("Dijet mass", is_independent=True,
                     is_binned=True, units="GeV")
@@ -105,14 +104,16 @@ def make_table_figure7_left(outdir):
     # Multiply by a thousand to go from pb / GeV -> pb / TeV
     xs_low.values = list(1e3 * data[:border, 1])
 
-    xs_low_unc = Uncertainty("Total",is_symmetric=False)
-    xs_low_unc.values = list(zip(-1e3 * data[:border, 4],1e3 * data[:border, 5]))
+    xs_low_unc = Uncertainty("Total", is_symmetric=False)
+    xs_low_unc.values = list(
+        zip(-1e3 * data[:border, 4], 1e3 * data[:border, 5]))
 
     xs_low.uncertainties.append(xs_low_unc)
 
     table.add_variable(mmed)
     table.add_variable(xs_low)
     return table
+
 
 def make_table_figure7_right(outdir):
     # Input provided as text file (Frederico Preiato, Giulia D'Imperio)
@@ -142,8 +143,9 @@ def make_table_figure7_right(outdir):
     # Multiply by a thousand to go from pb / GeV -> pb / TeV
     xs_high.values = list(1e3 * data[border:, 1])
 
-    xs_high_unc = Uncertainty("Total",is_symmetric=False)
-    xs_high_unc.values = list(zip(-1e3 * data[border:, 4], 1e3 * data[border:, 5]))
+    xs_high_unc = Uncertainty("Total", is_symmetric=False)
+    xs_high_unc.values = list(
+        zip(-1e3 * data[border:, 4], 1e3 * data[border:, 5]))
 
     xs_high.uncertainties.append(xs_high_unc)
 
