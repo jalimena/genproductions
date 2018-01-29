@@ -58,6 +58,16 @@ class Variable(object):
 
     values = property(get_values,set_values)
 
+    def scale_values(self,factor):
+        """Multiply each value by constant factor. Also applies to uncertainties."""
+        if(not self.is_binned):
+            self.set_values([factor * x for x in self.get_values() ])
+        else:
+            self.set_values([(factor * x[0], factor * x[1]) for x in self.get_values() ])
+
+        for unc in self.uncertainties:
+            unc.scale_values(factor)
+
     def make_dict(self):
         tmp = {}
         tmp["header"] = {"name": self.name, "units": self.units}
@@ -225,6 +235,13 @@ class Uncertainty(object):
     def get_values(self):
         return self._values
     values = property(get_values,set_values)
+
+    def scale_values(self,factor):
+        """Multiply each value by constant factor."""
+        if(self.is_symmetric):
+            self.set_values([factor * x for x in self.get_values() ])
+        else:
+            self.set_values([(factor * x[0], factor * x[1]) for x in self.get_values() ])
 
 class RootFileReader(object):
     """Easily extract information from ROOT histograms, graphs, etc"""
