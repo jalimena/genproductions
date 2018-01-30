@@ -81,8 +81,8 @@ def make_table_figure7_left(outdir):
     # Each columns holds one variable or uncertainty
     data = np.loadtxt("./input/fig7/DijetSpectrum_2016full_36-27invfb.txt")
 
-    table = Table("Differential dijet cross-section (Low mass analysis)")
-    table.description = "Observed differential dijet cross-section."
+    table = Table("Differential dijet spectrum (Low-mass analysis)")
+    table.description = "Observed differential dijet spectrum from the low-mass analysis. The cross-section is calculated by dividing the event yield by the bin width and luminosity."
     table.location = "Data from Figure 7 (left), located on page 8."
     table.keywords["observables"] = ["DSIG/DM"]
 
@@ -96,22 +96,33 @@ def make_table_figure7_left(outdir):
     mmed.values = mmed.values[:border]
 
     # Low mass analysis
-    xs_low = Variable("Observed")
-    xs_low.is_independent = False
-    xs_low.is_binned = False
-    xs_low.units = "pb/TeV"
+    xs = Variable("Cross-section")
+    xs.is_independent = False
+    xs.is_binned = False
+    xs.units = "pb/TeV"
 
     # Multiply by a thousand to go from pb / GeV -> pb / TeV
-    xs_low.values = list(1e3 * data[:border, 1])
+    xs.values = list(1e3 * data[:border, 1])
 
-    xs_low_unc = Uncertainty("Total", is_symmetric=False)
-    xs_low_unc.values = list(
+    xs_unc = Uncertainty("Total", is_symmetric=False)
+    xs_unc.values = list(
         zip(-1e3 * data[:border, 4], 1e3 * data[:border, 5]))
 
-    xs_low.uncertainties.append(xs_low_unc)
+    xs.uncertainties.append(xs_unc)
+
+    # Event yields provided in separate file
+    # Same binning as cross-section
+    yields = Variable("Event yield")
+    yields.is_independent = False
+    yields.is_binned = False
+    yields.units = "1"
+
+    yields.values = list(np.loadtxt("./input/fig7/yields_lowmass.txt"))
 
     table.add_variable(mmed)
-    table.add_variable(xs_low)
+    table.add_variable(yields)
+    table.add_variable(xs)
+
     return table
 
 
@@ -120,8 +131,8 @@ def make_table_figure7_right(outdir):
     # Each columns holds one variable or uncertainty
     data = np.loadtxt("./input/fig7/DijetSpectrum_2016full_36-27invfb.txt")
 
-    table = Table("Differential dijet cross-section (High mass analysis)")
-    table.description = "Observed differential dijet cross-section."
+    table = Table("Differential dijet spectrum (High-mass analysis)")
+    table.description = "Observed differential dijet spectrum from the high-mass analysis. The cross-section is calculated by dividing the event yield by the bin width and luminosity."
     table.location = "Data from Figure 7 (right), located on page 8."
     table.keywords["observables"] = ["DSIG/DM"]
 
@@ -135,22 +146,32 @@ def make_table_figure7_right(outdir):
     mmed.values = mmed.values[border:]
 
     # Low mass analysis
-    xs_high = Variable("Observed")
-    xs_high.is_independent = False
-    xs_high.is_binned = False
-    xs_high.units = "pb/TeV"
+    xs = Variable("Cross-section")
+    xs.is_independent = False
+    xs.is_binned = False
+    xs.units = "pb/TeV"
 
     # Multiply by a thousand to go from pb / GeV -> pb / TeV
-    xs_high.values = list(1e3 * data[border:, 1])
+    xs.values = list(1e3 * data[border:, 1])
 
-    xs_high_unc = Uncertainty("Total", is_symmetric=False)
-    xs_high_unc.values = list(
+    xs_unc = Uncertainty("Total", is_symmetric=False)
+    xs_unc.values = list(
         zip(-1e3 * data[border:, 4], 1e3 * data[border:, 5]))
 
-    xs_high.uncertainties.append(xs_high_unc)
+    xs.uncertainties.append(xs_unc)
+
+    # Event yields provided in separate file
+    # Same binning as cross-section
+    yields = Variable("Event yield")
+    yields.is_independent = False
+    yields.is_binned = False
+    yields.units = "1"
+
+    yields.values = list(np.loadtxt("./input/fig7/yields_highmass.txt"))
 
     table.add_variable(mmed)
-    table.add_variable(xs_high)
+    table.add_variable(yields)
+    table.add_variable(xs)
 
     return table
 
