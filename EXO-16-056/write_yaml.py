@@ -275,25 +275,6 @@ def make_table_figure13(outdir):
 
     return table
 
-    #~ def parse_tylers_graph(data):
-    #~ '''Get upper and lower quantiles from an unordered set of data.
-    #~ It is assumed that there are two y valeus for each x value.
-    #~ Y values are sorted by x value and the bigger/smaller one of the two y values is used for up/down quantiles.'''
-    #~ split = defaultdict(list)
-    #~ for x,y in zip(data["x"],data["y"]):
-    #~ split[x].append(y)
-
-    #~ for key in sorted(split.keys()):
-    #~ print key, split[key]
-    #~ list_unc = []
-    #~ for entry in split.values():
-    #~ print entry
-    #~ assert(len(entry)==2)
-    #~ list_unc.append(tuple(sorted(entry)))
-
-    #~ return list_unc
-
-
 def main():
     # Write to this directory
     outdir = "./submission/"
