@@ -11,11 +11,21 @@ b) to store the submission files.
 **Usage**
 ```
 # Set up the repository
+
+# Either via ssh
 git clone ssh://git@gitlab.cern.ch:7999/cms-exo-mci/exo-hepdata.git
+
+# Or via https
+g clone https://gitlab.cern.ch/cms-exo-mci/exo-hepdata.git
+
 cd exo-hepdata
 
 # Make sure the libraries are part of the python PATH.
+# either in bash
 source setenv.sh
+
+# or csh
+source setenv.csh
 ```
 
 **Example**
