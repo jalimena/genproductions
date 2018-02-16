@@ -30,15 +30,15 @@ source setenv.csh
 
 **Example**
 ```
-# Run an example
-cd EXO-16-052
+# Run a trivial example
+cd example/basic_unbinned_data
 ./write_yaml.py
 
 ls
 >>> submission  submission.tar.gz  write_yaml.py
 ```
 
-```submission``` is a folder containing individual yaml files. 
+```submission``` is a folder containing individual yaml files.  You can open them in a text editor.
 ```submission.tar.gz``` is an archive ready for uploading to HEPData.
 
 You can test this by going to
@@ -48,3 +48,4 @@ https://www.hepdata.net/record/sandbox
 and uploading the tar file to your private sandbox (no worries, this is not published)
 HEPData will then show you what your entry would look like.
 
+If you'd like to check out more complex examples, have a look at one of the existing submissions, e.g. `EXO-16-056`.
