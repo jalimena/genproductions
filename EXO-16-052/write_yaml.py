@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 import os
-
+import numpy as np
 from hepdata_lib import *
 
 
@@ -63,7 +63,75 @@ The observed numbers of events in each bin are also included. The last bin inclu
 
     return table
 
+def make_figure_10(outdir):
+    table = Table("Unparticle Limits")
+    table.location = "Data from figure 10, located on page 22."
+    table.description = """The 95% CL upper limits on the Wilson coefficient $\lambda \times (1\mathrm{TeV} / \Lambda_{U})^{d_{U}-1}$ of the unparticle-quark coupling operator."""
 
+    data = np.loadtxt("./input/unpart.txt",skiprows=2)
+
+    d = Variable("Scaling dimension $d_{U}$", is_independent=True, is_binned=False, units="1")
+    d.values = data[:,0]
+
+    obs = Variable("Observed Limit", is_independent=False, is_binned=False, units="1")
+    obs.values = data[:,2]
+
+    # Expected +- 1 sigma
+    exp_1s = Variable("Expected Limit $\pm$ 1 s.d.", is_independent=False, is_binned=False, units="1")
+    exp_1s.values = data[:,1]
+
+    unc_1s = Uncertainty("1 s.d.",is_symmetric=False)
+    unc_1s.set_values(zip(data[:,3],data[:,4]),nominal=exp_1s.values)
+    exp_1s.uncertainties.append(unc_1s)
+
+    # Expected +- 1 sigma
+    exp_2s = Variable("Expected Limit $\pm$ 2 s.d.", is_independent=False, is_binned=False, units="1")
+    exp_2s.values = data[:,1]
+    unc_2s = Uncertainty("2 s.d.",is_symmetric=False)
+    unc_2s.set_values(zip(data[:,5],data[:,6]),nominal=exp_2s.values)
+    exp_2s.uncertainties.append(unc_2s)
+
+    table.add_variable(d)
+    table.add_variable(obs)
+    table.add_variable(exp_1s)
+    table.add_variable(exp_2s)
+
+    return table
+
+def make_figure_11_right(outdir):
+    table = Table("ADD Limits")
+    table.location = "Data from figure 11 (right), located on page 22."
+    table.description = """The 95% CL lower limits on the reduced Planck mass $M_{D}$ as a function of the number of extra dimensions $d$."""
+
+    data = np.loadtxt("./input/add_md.txt",skiprows=2)
+
+    d = Variable("Number of extra dimension $d$", is_independent=True, is_binned=False, units="1")
+    d.values = data[:,0]
+
+    obs = Variable("Observed Limit", is_independent=False, is_binned=False, units="TeV")
+    obs.values = data[:,2]
+
+    # Expected +- 1 sigma
+    exp_1s = Variable("Expected Limit $\pm$ 1 s.d.", is_independent=False, is_binned=False, units="TeV")
+    exp_1s.values = data[:,1]
+
+    unc_1s = Uncertainty("1 s.d.",is_symmetric=False)
+    unc_1s.set_values(zip(data[:,3],data[:,4]),nominal=exp_1s.values)
+    exp_1s.uncertainties.append(unc_1s)
+
+    # Expected +- 1 sigma
+    exp_2s = Variable("Expected Limit $\pm$ 2 s.d.", is_independent=False, is_binned=False, units="TeV")
+    exp_2s.values = data[:,1]
+    unc_2s = Uncertainty("2 s.d.",is_symmetric=False)
+    unc_2s.set_values(zip(data[:,5],data[:,6]),nominal=exp_2s.values)
+    exp_2s.uncertainties.append(unc_2s)
+
+    table.add_variable(d)
+    table.add_variable(obs)
+    table.add_variable(exp_1s)
+    table.add_variable(exp_2s)
+
+    return table
 def main():
     # Write to this directory
     outdir = "./submission/"
@@ -71,6 +139,8 @@ def main():
     # Write some files
     submission = Submission()
     submission.tables.append(make_table_4(outdir))
+    submission.tables.append(make_figure_10(outdir))
+    submission.tables.append(make_figure_11_right(outdir))
     submission.read_abstract("./input/abstract.txt")
     submission.create_files(outdir)
 
