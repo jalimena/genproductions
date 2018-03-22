@@ -282,6 +282,38 @@ class RootFileReader(object):
         if(not self.tfile):
             raise IOError("RootReader: File not opened properly.")
 
+    def retrieve_object(self,path_to_object):
+        """
+        Generalized function to retrieve a TObject from a file.
+
+        There are two use cases:
+        1)  The object is saved under the exact path given.
+            In this case, the function behaves identically to TFile::Get.
+
+        2)  The object is saved as a primitive in a TCanvas.
+            In this case, the path has to be formatted as
+            PATH_TO_CANVAS/NAME_OF_PRIMITIVE
+        """
+        obj = self.tfile.Get(path_to_object)
+
+        # If the Get operation was successful, just return
+        # Otherwise, try canvas approach
+        if(obj):
+            return obj
+        else:
+            parts = path_to_object.split("/")
+            path_to_canvas = "/".join(parts[0:-1])
+            name = parts[-1]
+
+            canv = self.tfile.Get(path_to_canvas)
+            assert(canv)
+            for entry in list(canv.GetListOfPrimitives()):
+                if(entry.GetName() == name):
+                    return entry
+
+            raise IOError("Cannot find any object in file {0} with path {1}".format(self.tfile,path_to_object))
+
+
     def read_graph(self, path_to_graph):
         """Extract lists of X and Y values from a TGraph."""
         graph = self.tfile.Get(path_to_graph)
