@@ -337,3 +337,38 @@ class RootFileReader(object):
         for event in tree:
             values.append(getattr(event, branchname))
         return values
+
+
+def get_graph_points(graph):
+    """
+    Extract lists of X and Y values from a TGraph.
+
+    A dictionary is returned with the following key-value pairs:
+
+    key "x" -> value list of x values
+    key "y" -> value list of y values
+
+    If the input graph is a TGraphErrors (TGraphAsymmErrors), the dictionary also contains
+
+
+    key "dx" -> value list of x uncertainties (tuple of lower, upper uncertainty)
+    key "dy" -> value list of y uncertainties (tuple of lower, upper uncertainty)
+
+    """
+
+    points = defaultdict(list)
+
+    for i in range(graph.GetN()):
+        x = r.Double()
+        y = r.Double()
+        graph.GetPoint(i, x, y)
+        points["x"].append(float(x))
+        points["y"].append(float(y))
+        if(type(graph)==r.TGraphErrors):
+            points["dx"].append(graph.GetErrorX(i))
+            points["dy"].append(graph.GetErrorY(i))
+        elif(type(graph)==r.TGraphAsymmErrors):
+            points["dx"].append((graph.GetErrorXlow(i),graph.GetErrorXhigh(i)))
+            points["dy"].append((graph.GetErrorYlow(i),graph.GetErrorYhigh(i)))
+
+    return points

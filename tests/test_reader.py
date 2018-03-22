@@ -1,8 +1,9 @@
-from hepdata_lib import RootFileReader
+from hepdata_lib import *
+from test_utilities import *
 import ROOT as r
 import os
 import sys
-
+import random
 
 def test_retrieve_object():
     # The test file contains a canvas of name "c1", which is directly accessible
@@ -36,21 +37,11 @@ def test_retrieve_object():
     return True
 
 
-
 def main():
     functions = []
     functions.append(test_retrieve_object)
 
-    for f in functions:
-        passed = f()
-        if(passed):
-            print "test_variable: Test PASSED for function '{0}'.".format(f.func_name)
-        else:
-            print "test_variable: Test FAILED for function '{0}'.".format(f.func_name)
-            sys.exit(1)
-    print "test_variable: All tests PASSED."
-    sys.exit(0)
-
+    do_test(functions)
 
 if __name__ == '__main__':
     main()
