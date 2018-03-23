@@ -305,14 +305,14 @@ class RootFileReader(object):
             path_to_canvas = "/".join(parts[0:-1])
             name = parts[-1]
 
-            canv = self.tfile.Get(path_to_canvas)
-            assert(canv)
-            for entry in list(canv.GetListOfPrimitives()):
-                if(entry.GetName() == name):
-                    return entry
-
-            raise IOError("Cannot find any object in file {0} with path {1}".format(self.tfile,path_to_object))
-
+            try:
+                canv = self.tfile.Get(path_to_canvas)
+                assert(canv)
+                for entry in list(canv.GetListOfPrimitives()):
+                    if(entry.GetName() == name):
+                        return entry
+            except AssertionError:
+                raise IOError("Cannot find any object in file {0} with path {1}".format(self.tfile,path_to_object))
 
     def read_graph(self, path_to_graph):
         """Extract lists of X and Y values from a TGraph."""
