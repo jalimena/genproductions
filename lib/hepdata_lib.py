@@ -320,14 +320,8 @@ class RootFileReader(object):
 
         points = defaultdict(list)
 
-        for i in range(graph.GetN()):
-            x = r.Double()
-            y = r.Double()
-            graph.GetPoint(i, x, y)
-            points["x"].append(float(x))
-            points["y"].append(float(y))
+        return get_graph_points(graph)
 
-        return points
 
     def read_tree(self, path_to_tree, branchname):
         """Extract a list of values from a tree branch."""
