@@ -320,6 +320,12 @@ class RootFileReader(object):
         return get_graph_points(graph)
 
 
+
+    def read_hist_2d(self,path_to_hist):
+        hist = self.retrieve_object(path_to_hist)
+        return get_hist_2d_points(hist)
+
+
     def read_tree(self, path_to_tree, branchname):
         """Extract a list of values from a tree branch."""
         tree = self.tfile.Get(path_to_tree)
@@ -329,6 +335,18 @@ class RootFileReader(object):
             values.append(getattr(event, branchname))
         return values
 
+
+def get_hist_2d_points(hist):
+    points = defaultdict(list)
+    for ix in range(1,hist.GetNbinsX()+1):
+        x = hist.GetXaxis().GetBinCenter(ix)
+        for iy in range(1,hist.GetNbinsY()+1):
+            y = hist.GetYaxis().GetBinCenter(iy)
+            z = hist.GetBinContent(ix,iy)
+            points["x"].append(x)
+            points["y"].append(y)
+            points["z"].append(z)
+    return points
 
 def get_graph_points(graph):
     """
