@@ -243,6 +243,61 @@ def make_figure_6_left(outdir):
     return table
 
 
+def make_figure_5_right(outdir):
+    reader = RootFileReader("./input/figure5/limit_vector_cl95.root")
+    points = reader.read_hist_2d("limit_vector/h_limit_obs")
+
+    mmed = Variable("Mediator mass", is_independent=True, is_binned=True, units="GeV")
+    mmed.values = zip(points["xlow"],points["xhigh"])
+
+    mdm = Variable("Dark matter mass", is_independent=True, is_binned=True, units="GeV")
+    mdm.values = zip(points["ylow"],points["yhigh"])
+
+    obs = Variable("Observed", is_independent=False, is_binned=False, units="GeV")
+    obs.values = points["z"]
+
+    # Remove zeros
+    valid_indices = [i for i,x in enumerate(points["z"]) if x>0]
+
+    mmed.values = [mmed.values[i] for i in valid_indices]
+    mdm.values = [mdm.values[i] for i in valid_indices]
+    obs.values = [obs.values[i] for i in valid_indices]
+
+    table = Table("DM limit (vector mediator)")
+    table.location = "Data from Figure 5 (right), located on page 18."
+    table.description = "Limit on the signal strength of the DM signal in a simplified model with a vector mediator."
+    table.add_variable(mmed)
+    table.add_variable(mdm)
+    table.add_variable(obs)
+    return table
+
+def make_figure_5_left(outdir):
+    reader = RootFileReader("./input/figure5/limit_axial_cl95.root")
+    points = reader.read_hist_2d("limit_axial/h_limit_obs")
+
+    mmed = Variable("Mediator mass", is_independent=True, is_binned=True, units="GeV")
+    mmed.values = zip(points["xlow"],points["xhigh"])
+
+    mdm = Variable("Dark matter mass", is_independent=True, is_binned=True, units="GeV")
+    mdm.values = zip(points["ylow"],points["yhigh"])
+
+    obs = Variable("Observed", is_independent=False, is_binned=False, units="GeV")
+    obs.values = points["z"]
+
+    # Remove zeros
+    valid_indices = [i for i,x in enumerate(points["z"]) if x>0]
+
+    mmed.values = [mmed.values[i] for i in valid_indices]
+    mdm.values = [mdm.values[i] for i in valid_indices]
+    obs.values = [obs.values[i] for i in valid_indices]
+
+    table = Table("DM limit (axial mediator)")
+    table.location = "Data from Figure 5 (left), located on page 18."
+    table.description = "Limit on the signal strength of the DM signal in a simplified model with an axial-vector mediator."
+    table.add_variable(mmed)
+    table.add_variable(mdm)
+    table.add_variable(obs)
+    return table
 
 def main():
     # Write to this directory
@@ -256,6 +311,8 @@ def main():
     submission.tables.append(make_figure_12(outdir))
     submission.tables.append(make_figure_6_right(outdir))
     submission.tables.append(make_figure_6_left(outdir))
+    submission.tables.append(make_figure_5_right(outdir))
+    submission.tables.append(make_figure_5_left(outdir))
     submission.read_abstract("./input/abstract.txt")
     submission.create_files(outdir)
 
