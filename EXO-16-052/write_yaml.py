@@ -132,6 +132,33 @@ def make_figure_11_right(outdir):
     table.add_variable(exp_2s)
 
     return table
+
+def make_figure12(outdir):
+    reader = RootFileReader("./input/auxiliary/figure12/correlation.root")
+    points = reader.read_hist_2d("c1/correlation")
+
+    bin_borders = [100,125,150,175,200,250,300,350,400,500,600]
+    bin1 = Variable("First bin", is_independent=True, is_binned=True, units="GeV")
+    bin1.values = [(bin_borders[int(x-0.5)],bin_borders[int(x+0.5)]) for x in points["x"]]
+
+    bin2 = Variable("Second bin", is_independent=True, is_binned=True, units="GeV")
+    bin2.values = [(bin_borders[int(y-0.5)],bin_borders[int(y+0.5)]) for y in points["y"]]
+
+    correlation = Variable("Covariance",is_independent=False, is_binned=False,units="1")
+    correlation.values = points["z"]
+
+    table = Table("Bin covariance matrix")
+    table.location = "Data from Figure 12, located in the auxilliary material."
+    table.description = """The covariance matrix of the bin contents of the background fit. Because the matrix is symmetric by definiton, only the upper half is provided here for presentational purposes. The full matrix can be obtained by mirroring the given half along the diagonal."""
+    table.add_variable(bin1)
+    table.add_variable(bin2)
+    table.add_variable(correlation)
+
+    return table
+
+
+
+
 def main():
     # Write to this directory
     outdir = "./submission/"
@@ -141,6 +168,7 @@ def main():
     submission.tables.append(make_table_4(outdir))
     submission.tables.append(make_figure_10(outdir))
     submission.tables.append(make_figure_11_right(outdir))
+    submission.tables.append(make_figure12(outdir))
     submission.read_abstract("./input/abstract.txt")
     submission.create_files(outdir)
 
