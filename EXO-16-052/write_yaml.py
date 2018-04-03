@@ -133,7 +133,7 @@ def make_figure_11_right(outdir):
 
     return table
 
-def make_figure12(outdir):
+def make_figure_12(outdir):
     reader = RootFileReader("./input/auxiliary/figure12/correlation.root")
     points = reader.read_hist_2d("c1/correlation")
 
@@ -156,6 +156,91 @@ def make_figure12(outdir):
 
     return table
 
+def make_figure_6_right(outdir):
+    reader = RootFileReader("./input/figure6/limit_pseudo_0j_final.root")
+    points_obs = reader.read_graph("limit_pseudo/graph_obs")
+    points_exp = reader.read_graph("limit_pseudo/graph_exp")
+    points_2s = reader.read_graph("limit_pseudo/graph_2sd")
+    points_1s = reader.read_graph("limit_pseudo/graph_1sd")
+
+
+    mmed = Variable("Mediator mass", is_independent=True, is_binned=False, units="GeV")
+    mmed.values = points_obs["x"]
+
+    # Observed
+    obs = Variable("Observed limit", is_independent=False, is_binned=False, units="1")
+    obs.values = points_obs["y"]
+
+    # 1 Sigma
+    exp_1s = Variable("Expected limit $\pm$ 1 s.d.", is_independent=False, is_binned=False, units="1")
+    exp_1s.values = points_exp["y"]
+
+    unc1 = Uncertainty("1 s.d.", is_symmetric=False)
+    unc1.set_values(points_1s["dy"])
+
+    exp_1s.uncertainties.append(unc1)
+
+    # 2 Sigma
+    exp_2s = Variable("Expected limit $\pm$ 2 s.d.", is_independent=False, is_binned=False, units="1")
+    exp_2s.values = points_exp["y"]
+
+    unc2 = Uncertainty("2 s.d.", is_symmetric=False)
+    unc2.set_values(points_2s["dy"])
+
+    exp_2s.uncertainties.append(unc2)
+
+    table = Table("DM limit (pseudoscalar mediator)")
+    table.location = "Data from Figure 6, located on page 19."
+    table.description = "Limit on the signal strength of the DM signal in a simplified model with a pseudoscalar mediator."
+    table.add_variable(mmed)
+    table.add_variable(obs)
+    table.add_variable(exp_1s)
+    table.add_variable(exp_2s)
+
+    return table
+
+def make_figure_6_left(outdir):
+    reader = RootFileReader("./input/figure6/limit_scalar_0j_final.root")
+    points_obs = reader.read_graph("limit_scalar/graph_obs")
+    points_exp = reader.read_graph("limit_scalar/graph_exp")
+    points_2s = reader.read_graph("limit_scalar/graph_2sd")
+    points_1s = reader.read_graph("limit_scalar/graph_1sd")
+
+
+    mmed = Variable("Mediator mass", is_independent=True, is_binned=False, units="GeV")
+    mmed.values = points_obs["x"]
+
+    # Observed
+    obs = Variable("Observed limit", is_independent=False, is_binned=False, units="1")
+    obs.values = points_obs["y"]
+
+    # 1 Sigma
+    exp_1s = Variable("Expected limit $\pm$ 1 s.d.", is_independent=False, is_binned=False, units="1")
+    exp_1s.values = points_exp["y"]
+
+    unc1 = Uncertainty("1 s.d.", is_symmetric=False)
+    unc1.set_values(points_1s["dy"])
+
+    exp_1s.uncertainties.append(unc1)
+
+    # 2 Sigma
+    exp_2s = Variable("Expected limit $\pm$ 2 s.d.", is_independent=False, is_binned=False, units="1")
+    exp_2s.values = points_exp["y"]
+
+    unc2 = Uncertainty("2 s.d.", is_symmetric=False)
+    unc2.set_values(points_2s["dy"])
+
+    exp_2s.uncertainties.append(unc2)
+
+    table = Table("DM limit (scalar mediator)")
+    table.location = "Data from Figure 6, located on page 19."
+    table.description = "Limit on the signal strength of the DM signal in a simplified model with a scalar mediator."
+    table.add_variable(mmed)
+    table.add_variable(obs)
+    table.add_variable(exp_1s)
+    table.add_variable(exp_2s)
+
+    return table
 
 
 
@@ -168,7 +253,9 @@ def main():
     submission.tables.append(make_table_4(outdir))
     submission.tables.append(make_figure_10(outdir))
     submission.tables.append(make_figure_11_right(outdir))
-    submission.tables.append(make_figure12(outdir))
+    submission.tables.append(make_figure_12(outdir))
+    submission.tables.append(make_figure_6_right(outdir))
+    submission.tables.append(make_figure_6_left(outdir))
     submission.read_abstract("./input/abstract.txt")
     submission.create_files(outdir)
 
