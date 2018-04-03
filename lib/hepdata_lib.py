@@ -316,7 +316,7 @@ class RootFileReader(object):
 
     def read_graph(self, path_to_graph):
         """Extract lists of X and Y values from a TGraph."""
-        graph = retrieve_object(path_to_graph)
+        graph = self.retrieve_object(path_to_graph)
         return get_graph_points(graph)
 
 
