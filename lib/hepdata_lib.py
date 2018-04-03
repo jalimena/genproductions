@@ -347,11 +347,23 @@ def get_hist_2d_points(hist):
     points = defaultdict(list)
     for ix in range(1,hist.GetNbinsX()+1):
         x = hist.GetXaxis().GetBinCenter(ix)
+        wx = hist.GetXaxis().GetBinWidth(ix)
         for iy in range(1,hist.GetNbinsY()+1):
             y = hist.GetYaxis().GetBinCenter(iy)
+            wy = hist.GetYaxis().GetBinWidth(iy)
+
             z = hist.GetBinContent(ix,iy)
+
             points["x"].append(x)
+            points["wx"].append(wx)
+            points["xlow"].append(x-wx/2)
+            points["xhigh"].append(x+wx/2)
+
             points["y"].append(y)
+            points["wy"].append(wy)
+            points["ylow"].append(y-wy/2)
+            points["yhigh"].append(y+wy/2)
+
             points["z"].append(z)
     return points
 
