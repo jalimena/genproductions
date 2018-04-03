@@ -311,6 +311,13 @@ class RootFileReader(object):
                 for entry in list(canv.GetListOfPrimitives()):
                     if(entry.GetName() == name):
                         return entry
+
+                # Didn't find anything. Print available primitives to help user debug.
+                print "Available primitives in TCanvas '{0}':".format(path_to_canvas)
+                for entry in list(canv.GetListOfPrimitives()):
+                    print "Name: '{0}', Type: '{1}'.".format(entry.GetName(),type(entry))
+                assert(False)
+
             except AssertionError:
                 raise IOError("Cannot find any object in file {0} with path {1}".format(self.tfile,path_to_object))
 
@@ -365,6 +372,11 @@ def get_graph_points(graph):
 
     """
 
+    # Check input
+    if( type(graph) not in [r.TGraph, r.TGraphErrors, r.TGraphAsymmErrors]):
+        raise TypeError("Expected to input to be TGraph or similar, instead got '{0}'".format(type(graph)))
+
+    # Extract points
     points = defaultdict(list)
 
     for i in range(graph.GetN()):
@@ -377,7 +389,7 @@ def get_graph_points(graph):
             points["dx"].append(graph.GetErrorX(i))
             points["dy"].append(graph.GetErrorY(i))
         elif(type(graph)==r.TGraphAsymmErrors):
-            points["dx"].append((graph.GetErrorXlow(i),graph.GetErrorXhigh(i)))
-            points["dy"].append((graph.GetErrorYlow(i),graph.GetErrorYhigh(i)))
+            points["dx"].append((-graph.GetErrorXlow(i),graph.GetErrorXhigh(i)))
+            points["dy"].append((-graph.GetErrorYlow(i),graph.GetErrorYhigh(i)))
 
     return points
