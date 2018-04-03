@@ -23,7 +23,7 @@ def make_table_4(outdir):
     ]
 
     table = Table("Event yields in the signal region")
-    table.location = "Table 4, located on page 17."
+    table.location = "Data from Table 4, located on page 17."
     table.description = """Expected event yields in each $p_{\mathrm{T}}^{\mathrm{miss}}$ bin for the sum of background processes in the signal region (SR).
 The background yields and their corresponding uncertainties are obtained after performing a fit to data.
 Two sets of background yields are reported: one from a background-only fit to data in both the SR and the control regions (CRs), and one from a fit to data in all CRs, but excluding data in the SR.
@@ -65,7 +65,7 @@ The observed numbers of events in each bin are also included. The last bin inclu
 
 def make_figure_10(outdir):
     table = Table("Unparticle Limits")
-    table.location = "Data from figure 10, located on page 22."
+    table.location = "Data from Figure 10, located on page 22."
     table.description = """The 95% CL upper limits on the Wilson coefficient $\lambda \times (1\mathrm{TeV} / \Lambda_{U})^{d_{U}-1}$ of the unparticle-quark coupling operator."""
 
     data = np.loadtxt("./input/unpart.txt",skiprows=2)
@@ -100,7 +100,7 @@ def make_figure_10(outdir):
 
 def make_figure_11_right(outdir):
     table = Table("ADD Limits")
-    table.location = "Data from figure 11 (right), located on page 22."
+    table.location = "Data from Figure 11 (right), located on page 22."
     table.description = """The 95% CL lower limits on the reduced Planck mass $M_{D}$ as a function of the number of extra dimensions $d$."""
 
     data = np.loadtxt("./input/add_md.txt",skiprows=2)
