@@ -373,22 +373,27 @@ def get_graph_points(graph):
     """
 
     # Check input
-    if( type(graph) not in [r.TGraph, r.TGraphErrors, r.TGraphAsymmErrors]):
+    if( type(graph) not in [r.TGraph, r.TGraphErrors, r.TGraphAsymmErrors, r.TGraph2D]):
         raise TypeError("Expected to input to be TGraph or similar, instead got '{0}'".format(type(graph)))
 
     # Extract points
     points = defaultdict(list)
 
-    for i in range(graph.GetN()):
-        x = r.Double()
-        y = r.Double()
-        graph.GetPoint(i, x, y)
-        points["x"].append(float(x))
-        points["y"].append(float(y))
-        if(type(graph)==r.TGraphErrors):
+    # Central value
+    points["x"] = list(graph.GetX())
+    points["y"] = list(graph.GetY())
+    if(type(graph)==r.TGraph2D):
+        points["z"] = list(graph.GetZ())
+
+    # For uncertainties, we do not use the inbuilt Get commands
+    # because they can give segmentation faults
+    if(type(graph)==r.TGraphErrors):
+        for i in range(graph.GetN()):
             points["dx"].append(graph.GetErrorX(i))
             points["dy"].append(graph.GetErrorY(i))
-        elif(type(graph)==r.TGraphAsymmErrors):
+
+    elif(type(graph)==r.TGraphAsymmErrors):
+        for i in range(graph.GetN()):
             points["dx"].append((-graph.GetErrorXlow(i),graph.GetErrorXhigh(i)))
             points["dy"].append((-graph.GetErrorYlow(i),graph.GetErrorYhigh(i)))
 
