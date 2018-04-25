@@ -299,6 +299,17 @@ def make_figure_5_left(outdir):
     table.add_variable(obs)
     return table
 
+def make_figure_9(outdir):
+    reader = RootFileReader("./input/figure9/ana_hzinv_met_nj_from110to1000_logx1_logy0.root")
+    points = reader.read_graph("ana_hzinv_met_nj_from110to1000_logx1_logy0/asd")
+
+
+
+    table = Table("Higgs invisible limits")
+
+    return table
+
+
 def main():
     # Write to this directory
     outdir = "./submission/"
@@ -313,6 +324,7 @@ def main():
     submission.tables.append(make_figure_6_left(outdir))
     submission.tables.append(make_figure_5_right(outdir))
     submission.tables.append(make_figure_5_left(outdir))
+    submission.tables.append(make_figure_9(outdir))
     submission.read_abstract("./input/abstract.txt")
     submission.create_files(outdir)
 
