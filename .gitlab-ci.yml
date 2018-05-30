@@ -1,7 +1,15 @@
 before_script:
+- export SCRAM_ARCH=slc6_amd64_gcc630
+- source /cvmfs/cms.cern.ch/cmsset_default.sh
+- cd /cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_3_1/
+- eval `scramv1 runtime -sh`
+- cd -
 - pip install git+https://github.com/clelange/hepdata_lib
 
+
 EXO-16-052:
+  tags:
+  - cvmfs
   script:
   - cd EXO-16-052
   - python ./write_yaml.py
@@ -11,6 +19,8 @@ EXO-16-052:
 
 
 EXO-16-056:
+  tags:
+  - cvmfs
   script:
   - cd EXO-16-056
   - python ./write_yaml.py
