@@ -98,6 +98,7 @@ def make_figure_10(outdir):
     table.add_variable(obs)
     table.add_variable(exp_1s)
     table.add_variable(exp_2s)
+    table.add_image("./input/PDF/Figure_010.pdf","./submission/")
 
     return table
 
@@ -134,6 +135,7 @@ def make_figure_11_right(outdir):
     table.add_variable(exp_1s)
     table.add_variable(exp_2s)
 
+    table.add_image("./input/PDF/Figure_011-b.pdf","./submission/")
     return table
 
 def make_figure_12(outdir):
@@ -156,7 +158,7 @@ def make_figure_12(outdir):
     table.add_variable(bin1)
     table.add_variable(bin2)
     table.add_variable(correlation)
-
+    table.add_image("./input/PDF/Figure_012.pdf","./submission/")
     return table
 
 def make_figure_6_right(outdir):
@@ -199,6 +201,7 @@ def make_figure_6_right(outdir):
     table.add_variable(obs)
     table.add_variable(exp_1s)
     table.add_variable(exp_2s)
+    table.add_image("./input/PDF/Figure_006-b.pdf","./submission/")
 
     return table
 
@@ -242,6 +245,7 @@ def make_figure_6_left(outdir):
     table.add_variable(obs)
     table.add_variable(exp_1s)
     table.add_variable(exp_2s)
+    table.add_image("./input/PDF/Figure_006-a.pdf","./submission/")
 
     return table
 
@@ -272,6 +276,8 @@ def make_figure_5_right(outdir):
     table.add_variable(mmed)
     table.add_variable(mdm)
     table.add_variable(obs)
+    table.add_image("./input/PDF/Figure_005-b.pdf","./submission/")
+
     return table
 
 def make_figure_5_left(outdir):
@@ -300,6 +306,8 @@ def make_figure_5_left(outdir):
     table.add_variable(mmed)
     table.add_variable(mdm)
     table.add_variable(obs)
+    table.add_image("./input/PDF/Figure_005-a.pdf","./submission/")
+
     return table
 
 def make_figure_9(outdir):
