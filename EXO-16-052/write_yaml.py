@@ -364,10 +364,10 @@ def main():
     # Write some files
     submission = Submission()
     submission.tables.append(make_table_4(outdir))
-    submission.tables.append(make_figure_5_right(outdir))
     submission.tables.append(make_figure_5_left(outdir))
-    submission.tables.append(make_figure_6_right(outdir))
+    submission.tables.append(make_figure_5_right(outdir))
     submission.tables.append(make_figure_6_left(outdir))
+    submission.tables.append(make_figure_6_right(outdir))
     submission.tables.append(make_figure_9(outdir))
     submission.tables.append(make_figure_10(outdir))
     submission.tables.append(make_figure_11_right(outdir))
