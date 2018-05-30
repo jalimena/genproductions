@@ -3,7 +3,7 @@
 import os
 import numpy as np
 from hepdata_lib import *
-
+import textwrap
 
 def make_table_4(outdir):
     # This is the raw data from EXO-16-052
@@ -312,12 +312,47 @@ def make_figure_5_left(outdir):
 
 def make_figure_9(outdir):
     reader = RootFileReader("./input/figure9/ana_hzinv_met_nj_from110to1000_logx1_logy0.root")
-    points = reader.read_graph("ana_hzinv_met_nj_from110to1000_logx1_logy0/asd")
+    canvas = reader.retrieve_object("ana_hzinv_met_nj_from110to1000_logx1_logy0")
 
-
+    graphs = [p for p in canvas.GetListOfPrimitives() if p.GetName() == "Graph"]
+    points_2s  = get_graph_points(graphs[0])
+    points_1s  = get_graph_points(graphs[1])
+    points_exp  = get_graph_points(graphs[2])
+    points_theo = get_graph_points(graphs[3])
+    points_obs  = get_graph_points(graphs[4])
 
     table = Table("Higgs invisible limits")
+    table.location = "Data from Figure 9, located on page 18."
+    table.description = textwrap.dedent("""
+    Expected and observed 95% CL upper limits on the product of the production cross section
+    and the branching fraction, $\sigma$(qq -> ZH) B(H -> inv.), as a function of the SM-like Higgs
+    boson mass. The limits consider only quark-induced Higgs boson production.
+    """)
+    mh = Variable("Higgs boson Mass", is_independent=True, is_binned=False, units="GeV")
+    mh.values = points_obs["x"]
+    obs = Variable("Observed", is_independent=False, is_binned=False, units="1")
+    obs.values = points_obs["y"]
 
+    unc1 = Uncertainty("1 s.d.", is_symmetric=False)
+    unc1.values = points_1s["dy"]
+
+    exp_1s = Variable("Expected $\pm$ 1 s.d.", is_independent=False, is_binned=False, units="1")
+    exp_1s.values = points_exp["y"]
+    unc1 = Uncertainty("1 s.d.", is_symmetric=False)
+    unc1.values = points_1s["dy"]
+    exp_1s.uncertainties.append(unc1)
+
+    exp_2s = Variable("Expected $\pm$ 2 s.d.", is_independent=False, is_binned=False, units="1")
+    exp_2s.values = points_exp["y"]
+    unc2 = Uncertainty("2 s.d.", is_symmetric=False)
+    unc2.values = points_2s["dy"]
+    exp_2s.uncertainties.append(unc2)
+
+    table.add_variable(mh)
+    table.add_variable(obs)
+    table.add_variable(exp_1s)
+    table.add_variable(exp_2s)
+    table.add_image("./input/PDF/Figure_009.pdf","./submission")
     return table
 
 
@@ -335,7 +370,7 @@ def main():
     submission.tables.append(make_figure_6_left(outdir))
     submission.tables.append(make_figure_5_right(outdir))
     submission.tables.append(make_figure_5_left(outdir))
-    # submission.tables.append(make_figure_9(outdir))
+    submission.tables.append(make_figure_9(outdir))
     submission.read_abstract("./input/abstract.txt")
     submission.create_files(outdir)
 
