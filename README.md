@@ -1,4 +1,4 @@
-**Repository to store everything HEPData submission files in EXO.**
+**Repository to store EXO HEPData submission files (and the scripts that produce them).**
 
 The scripts rely heavily on the [hepdata_lib](https://github.com/clelange/hepdata_lib) python library.
 Please make sure to set it up before trying to use the files in this repository (see the [documentation](https://hepdata-lib.readthedocs.io/en/latest/]))
