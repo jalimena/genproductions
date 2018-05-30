@@ -61,6 +61,7 @@ The observed numbers of events in each bin are also included. The last bin inclu
     table.add_variable(exp_full)
     table.add_variable(exp_cr)
 
+    table.add_image("input/PDF/Figure_004.pdf","./submission/")
     return table
 
 def make_figure_10(outdir):
@@ -250,7 +251,7 @@ def make_figure_6_left(outdir):
     return table
 
 
-def make_figure_5_right(outdir):
+def make_figure_5_left(outdir):
     reader = RootFileReader("./input/figure5/limit_vector_cl95.root")
     points = reader.read_hist_2d("limit_vector/h_limit_obs")
 
@@ -271,16 +272,16 @@ def make_figure_5_right(outdir):
     obs.values = [obs.values[i] for i in valid_indices]
 
     table = Table("DM limit (vector mediator)")
-    table.location = "Data from Figure 5 (right), located on page 18."
+    table.location = "Data from Figure 5 (left), located on page 18."
     table.description = "Limit on the signal strength of the DM signal in a simplified model with a vector mediator."
     table.add_variable(mmed)
     table.add_variable(mdm)
     table.add_variable(obs)
-    table.add_image("./input/PDF/Figure_005-b.pdf","./submission/")
+    table.add_image("./input/PDF/Figure_005-a.pdf","./submission/")
 
     return table
 
-def make_figure_5_left(outdir):
+def make_figure_5_right(outdir):
     reader = RootFileReader("./input/figure5/limit_axial_cl95.root")
     points = reader.read_hist_2d("limit_axial/h_limit_obs")
 
@@ -301,12 +302,12 @@ def make_figure_5_left(outdir):
     obs.values = [obs.values[i] for i in valid_indices]
 
     table = Table("DM limit (axial mediator)")
-    table.location = "Data from Figure 5 (left), located on page 18."
+    table.location = "Data from Figure 5 (right), located on page 18."
     table.description = "Limit on the signal strength of the DM signal in a simplified model with an axial-vector mediator."
     table.add_variable(mmed)
     table.add_variable(mdm)
     table.add_variable(obs)
-    table.add_image("./input/PDF/Figure_005-a.pdf","./submission/")
+    table.add_image("./input/PDF/Figure_005-b.pdf","./submission/")
 
     return table
 
@@ -363,14 +364,15 @@ def main():
     # Write some files
     submission = Submission()
     submission.tables.append(make_table_4(outdir))
+    submission.tables.append(make_figure_5_right(outdir))
+    submission.tables.append(make_figure_5_left(outdir))
+    submission.tables.append(make_figure_6_right(outdir))
+    submission.tables.append(make_figure_6_left(outdir))
+    submission.tables.append(make_figure_9(outdir))
     submission.tables.append(make_figure_10(outdir))
     submission.tables.append(make_figure_11_right(outdir))
     submission.tables.append(make_figure_12(outdir))
-    submission.tables.append(make_figure_6_right(outdir))
-    submission.tables.append(make_figure_6_left(outdir))
-    submission.tables.append(make_figure_5_right(outdir))
-    submission.tables.append(make_figure_5_left(outdir))
-    submission.tables.append(make_figure_9(outdir))
+
     submission.read_abstract("./input/abstract.txt")
     submission.create_files(outdir)
 
