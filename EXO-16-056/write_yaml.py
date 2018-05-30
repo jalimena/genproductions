@@ -46,7 +46,7 @@ def make_table_figure19(outdir):
 
     unc1 = Uncertainty("1 s.d.")
     unc1.is_symmetric = False
-    unc1.set_values(
+    unc1.set_values_from_intervals(
         zip(
             reader.read_tree(
                 "xsecTree", "xsecULExpMinus_PFDijet2016"
@@ -58,7 +58,7 @@ def make_table_figure19(outdir):
 
     unc2 = Uncertainty("2 s.d.")
     unc2.is_symmetric = False
-    unc2.set_values(
+    unc2.set_values_from_intervals(
         zip(
             reader.read_tree(
                 "xsecTree", "xsecULExpMinus2_PFDijet2016"
@@ -252,12 +252,12 @@ def make_table_figure13(outdir):
 
     unc1 = Uncertainty("1 s.d.")
     unc1.is_symmetric = False
-    unc1.set_values(zip(data_exp_1s_low_down["y"] + data_exp_1s_high_down["y"],
+    unc1.set_values_from_intervals(zip(data_exp_1s_low_down["y"] + data_exp_1s_high_down["y"],
                         data_exp_1s_low_up["y"] + data_exp_1s_high_up["y"]), nominal=exp_1sd.values)
 
     unc2 = Uncertainty("2 s.d.")
     unc2.is_symmetric = False
-    unc2.set_values(zip(data_exp_2s_low_down["y"] + data_exp_2s_high_down["y"],
+    unc2.set_values_from_intervals(zip(data_exp_2s_low_down["y"] + data_exp_2s_high_down["y"],
                         data_exp_2s_low_up["y"] + data_exp_2s_high_up["y"]), nominal=exp_2sd.values)
 
     exp_1sd.uncertainties.append(unc1)
