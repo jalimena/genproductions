@@ -1,12 +1,7 @@
-**Repository to store everything around HEPData use in EXO.**
+**Repository to store everything HEPData submission files in EXO.**
 
-The goal is to
-
-a) provide libraries, scripts, etc. to assisst analyzers in creating HEPData submissions.
-
-b) to store the submission files.
-
-
+The scripts rely heavily on the [hepdata_lib](https://github.com/clelange/hepdata_lib) python library.
+Please make sure to set it up before trying to use the files in this repository (see the [documentation](https://hepdata-lib.readthedocs.io/en/latest/]))
 
 **Usage**
 ```
@@ -20,18 +15,12 @@ git clone https://gitlab.cern.ch/cms-exo-mci/exo-hepdata.git
 
 cd exo-hepdata
 
-# Make sure the libraries are part of the python PATH.
-# either in bash
-source setenv.sh
-
-# or csh
-source setenv.csh
 ```
 
 **Example**
 ```
-# Run a trivial example
-cd example/basic_unbinned_data
+# Run an example
+cd EXO-16-052
 ./write_yaml.py
 
 ls
@@ -47,5 +36,3 @@ https://www.hepdata.net/record/sandbox
 
 and uploading the tar file to your private sandbox (no worries, this is not published)
 HEPData will then show you what your entry would look like.
-
-If you'd like to check out more complex examples, have a look at one of the existing submissions, e.g. `EXO-16-056`.
