@@ -66,9 +66,11 @@ The observed numbers of events in each bin are also included. The last bin inclu
 def make_figure_10(outdir):
     table = Table("Unparticle Limits")
     table.location = "Data from Figure 10, located on page 22."
-    table.description = """The 95% CL upper limits on the Wilson coefficient $\lambda \times (1\mathrm{TeV} / \Lambda_{U})^{d_{U}-1}$ of the unparticle-quark coupling operator."""
+    table.description = """The 95% CL upper limits on the Wilson coefficient $\lambda(1\mathrm{TeV} / \Lambda_{U})^{d_{U}-1}$ of the unparticle-quark coupling operator."""
 
+    # Load data and sort lines by first column
     data = np.loadtxt("./input/unpart.txt",skiprows=2)
+    data = data[data[:,0].argsort()]
 
     d = Variable("Scaling dimension $d_{U}$", is_independent=True, is_binned=False, units="1")
     d.values = data[:,0]
@@ -81,14 +83,15 @@ def make_figure_10(outdir):
     exp_1s.values = data[:,1]
 
     unc_1s = Uncertainty("1 s.d.",is_symmetric=False)
-    unc_1s.set_values(zip(data[:,3],data[:,4]),nominal=exp_1s.values)
+    unc_1s.values = zip(data[:,3]-data[:,1],data[:,4]-data[:,1])
+
     exp_1s.uncertainties.append(unc_1s)
 
     # Expected +- 1 sigma
     exp_2s = Variable("Expected Limit $\pm$ 2 s.d.", is_independent=False, is_binned=False, units="1")
     exp_2s.values = data[:,1]
     unc_2s = Uncertainty("2 s.d.",is_symmetric=False)
-    unc_2s.set_values(zip(data[:,5],data[:,6]),nominal=exp_2s.values)
+    unc_2s.values = zip(-data[:,5],data[:,6])
     exp_2s.uncertainties.append(unc_2s)
 
     table.add_variable(d)
@@ -116,14 +119,14 @@ def make_figure_11_right(outdir):
     exp_1s.values = data[:,1]
 
     unc_1s = Uncertainty("1 s.d.",is_symmetric=False)
-    unc_1s.set_values(zip(data[:,3],data[:,4]),nominal=exp_1s.values)
+    unc_1s.values = zip(data[:,4] - data[:,1],data[:,3] - data[:,1])
     exp_1s.uncertainties.append(unc_1s)
 
     # Expected +- 1 sigma
     exp_2s = Variable("Expected Limit $\pm$ 2 s.d.", is_independent=False, is_binned=False, units="TeV")
     exp_2s.values = data[:,1]
     unc_2s = Uncertainty("2 s.d.",is_symmetric=False)
-    unc_2s.set_values(zip(data[:,5],data[:,6]),nominal=exp_2s.values)
+    unc_2s.values = zip(data[:,6] - data[:,1],data[:,5] - data[:,1])
     exp_2s.uncertainties.append(unc_2s)
 
     table.add_variable(d)
@@ -176,7 +179,7 @@ def make_figure_6_right(outdir):
     exp_1s.values = points_exp["y"]
 
     unc1 = Uncertainty("1 s.d.", is_symmetric=False)
-    unc1.set_values(points_1s["dy"])
+    unc1.values = points_1s["dy"]
 
     exp_1s.uncertainties.append(unc1)
 
@@ -185,7 +188,7 @@ def make_figure_6_right(outdir):
     exp_2s.values = points_exp["y"]
 
     unc2 = Uncertainty("2 s.d.", is_symmetric=False)
-    unc2.set_values(points_2s["dy"])
+    unc2.values = points_2s["dy"]
 
     exp_2s.uncertainties.append(unc2)
 
@@ -219,7 +222,7 @@ def make_figure_6_left(outdir):
     exp_1s.values = points_exp["y"]
 
     unc1 = Uncertainty("1 s.d.", is_symmetric=False)
-    unc1.set_values(points_1s["dy"])
+    unc1.values = points_1s["dy"]
 
     exp_1s.uncertainties.append(unc1)
 
@@ -228,7 +231,7 @@ def make_figure_6_left(outdir):
     exp_2s.values = points_exp["y"]
 
     unc2 = Uncertainty("2 s.d.", is_symmetric=False)
-    unc2.set_values(points_2s["dy"])
+    unc2.values = points_2s["dy"]
 
     exp_2s.uncertainties.append(unc2)
 
@@ -248,10 +251,10 @@ def make_figure_5_right(outdir):
     points = reader.read_hist_2d("limit_vector/h_limit_obs")
 
     mmed = Variable("Mediator mass", is_independent=True, is_binned=True, units="GeV")
-    mmed.values = zip(points["xlow"],points["xhigh"])
+    mmed.values = points["x_edges"]
 
     mdm = Variable("Dark matter mass", is_independent=True, is_binned=True, units="GeV")
-    mdm.values = zip(points["ylow"],points["yhigh"])
+    mdm.values = points["y_edges"]
 
     obs = Variable("Observed", is_independent=False, is_binned=False, units="GeV")
     obs.values = points["z"]
@@ -276,10 +279,10 @@ def make_figure_5_left(outdir):
     points = reader.read_hist_2d("limit_axial/h_limit_obs")
 
     mmed = Variable("Mediator mass", is_independent=True, is_binned=True, units="GeV")
-    mmed.values = zip(points["xlow"],points["xhigh"])
+    mmed.values = points["x_edges"]
 
     mdm = Variable("Dark matter mass", is_independent=True, is_binned=True, units="GeV")
-    mdm.values = zip(points["ylow"],points["yhigh"])
+    mdm.values = points["y_edges"]
 
     obs = Variable("Observed", is_independent=False, is_binned=False, units="GeV")
     obs.values = points["z"]
@@ -324,7 +327,7 @@ def main():
     submission.tables.append(make_figure_6_left(outdir))
     submission.tables.append(make_figure_5_right(outdir))
     submission.tables.append(make_figure_5_left(outdir))
-    submission.tables.append(make_figure_9(outdir))
+    # submission.tables.append(make_figure_9(outdir))
     submission.read_abstract("./input/abstract.txt")
     submission.create_files(outdir)
 
