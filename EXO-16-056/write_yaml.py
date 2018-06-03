@@ -14,7 +14,7 @@ def make_table_figure19(outdir):
     table = Table("Coupling limits (DM mediator)")
     table.description = "The observed and expected 95% CL upper limits on the universal quark coupling $g_{q}$ as a function of resonance mass for a vector mediator of interactions between quarks and dark matter."
 
-    table.location = "Data from Figure 19, located on page 24."
+    table.location = "Data from Figure 19."
     table.keywords["observables"] = ["GV"]
 
     # X axis: Mediator mass
@@ -73,6 +73,7 @@ def make_table_figure19(outdir):
     table.add_variable(exp_2sd)
     table.add_variable(obs)
 
+    table.add_image("./input/PDF/Figure_019.pdf","./submission/")
     return table
 
 
@@ -83,7 +84,7 @@ def make_table_figure7_left(outdir):
 
     table = Table("Differential dijet spectrum (Low-mass analysis)")
     table.description = "Observed differential dijet spectrum from the low-mass analysis. The cross-section is calculated by dividing the event yield by the bin width and luminosity."
-    table.location = "Data from Figure 7 (left), located on page 8."
+    table.location = "Data from Figure 7 (left)."
     table.keywords["observables"] = ["DSIG/DM"]
 
     # Border between low and high mass entries
@@ -122,6 +123,7 @@ def make_table_figure7_left(outdir):
     table.add_variable(mmed)
     table.add_variable(yields)
     table.add_variable(xs)
+    table.add_image("./input/PDF/Figure_007-a.pdf","./submission/")
 
     return table
 
@@ -133,7 +135,7 @@ def make_table_figure7_right(outdir):
 
     table = Table("Differential dijet spectrum (High-mass analysis)")
     table.description = "Observed differential dijet spectrum from the high-mass analysis. The cross-section is calculated by dividing the event yield by the bin width and luminosity."
-    table.location = "Data from Figure 7 (right), located on page 8."
+    table.location = "Data from Figure 7 (right)."
     table.keywords["observables"] = ["DSIG/DM"]
 
     # Border between low and high mass entries
@@ -172,6 +174,7 @@ def make_table_figure7_right(outdir):
     table.add_variable(mmed)
     table.add_variable(yields)
     table.add_variable(xs)
+    table.add_image("./input/PDF/Figure_007-b.pdf","./submission/")
 
     return table
 
@@ -200,7 +203,7 @@ def make_table_figure12(outdir):
     obs_qq.values = data[:, 3]
 
     table = Table("Cross-section limits")
-    table.location = "Data from Figure 12, located on page 15."
+    table.location = "Data from Figure 12."
     table.keywords["observables"] = ["DSIG/DM"]
     table.description = "The observed 95% CL upper limits on the product of the cross section, branching fraction, and acceptance for quark-quark, quark-gluon, and gluon-gluon type dijet resonances."
 
@@ -208,6 +211,7 @@ def make_table_figure12(outdir):
     table.add_variable(obs_gg)
     table.add_variable(obs_gq)
     table.add_variable(obs_qq)
+    table.add_image("./input/PDF/Figure_012.pdf","./submission/")
 
     return table
 
@@ -264,7 +268,7 @@ def make_table_figure13(outdir):
     exp_2sd.uncertainties.append(unc2)
 
     table = Table("Coupling limits (Quark only)")
-    table.location = "Data from Figure 13, located on page 17."
+    table.location = "Data from Figure 13."
     table.keywords["observables"] = ["GQ"]
     table.description = "The observed and expected 95% CL upper limits on the universal quark coupling $g_{q}'$ as a function of resonance mass for a leptophobic Z' resonance that only couples to quarks."
 
@@ -272,6 +276,7 @@ def make_table_figure13(outdir):
     table.add_variable(obs)
     table.add_variable(exp_1sd)
     table.add_variable(exp_2sd)
+    table.add_image("./input/PDF/Figure_013.pdf","./submission/")
 
     return table
 
